@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beanio xmlns="http://www.beanio.org/2011/01" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.beanio.org/2011/01 http://www.beanio.org/2011/01/mapping.xsd">
-    <stream name="Estoque" format="fixedlength">
-        <record name="E1" minOccurs="1" maxOccurs="1" class="br.com.openpdv.modelo.Estoque">
+    <stream name="AnexoIV" format="fixedlength">
+        <record name="E1" minOccurs="1" maxOccurs="1" class="br.com.openpdv.modelo.anexo.iv.E1">
             <field name="padrao" type="string" length="2" default="E1"/>
             <field name="cnpj" type="string" length="14" justify="right" padding="0"/>
             <field name="ie" type="string" length="14" justify="left" padding=" " />
@@ -15,7 +15,7 @@
             <field name="data" type="date" length="8" format="yyyyMMdd"/>
             <field name="data" type="date" length="6" format="HHmmss"/>
         </record>
-        <record name="E2" minOccurs="0" maxOccurs="unbounded" class="br.com.openpdv.modelo.Produto">
+        <record name="E2" minOccurs="0" maxOccurs="unbounded" class="br.com.openpdv.modelo.anexo.iv.E2">
             <field name="padrao" type="string" length="2" default="E2"/>
             <field name="cnpj" type="string" length="14" justify="right" padding="0"/>
             <field name="codigo" type="string" length="14" justify="left" padding=" "/>
@@ -24,7 +24,7 @@
             <field name="mensuracao" type="string" length="1"/>
             <field name="estoque" type="double" length="9" format="#0" justify="right" padding="0"/>
         </record>
-        <record name="E9" minOccurs="1" maxOccurs="1" class="br.com.openpdv.modelo.Estoque">
+        <record name="E9" minOccurs="1" maxOccurs="1" class="br.com.openpdv.modelo.anexo.iv.E9">
             <field name="padrao" type="string" length="2" default="E9"/>
             <field name="cnpj" type="string" length="14" justify="right" padding="0"/>
             <field name="ie" type="string" length="14" justify="left" padding=" " />

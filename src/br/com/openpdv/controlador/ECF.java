@@ -25,7 +25,9 @@ public class ECF {
     private AsyncCallback<String[]> async;
     public static final String linhaSimples = "------------------------------------------------";
     public static final String linhaDupla = "================================================";
-
+    public static final String OK = "OK";
+    public static final String ERRO = "ERRO";
+    
     /**
      * Construtor padrao.
      */
@@ -131,24 +133,24 @@ public class ECF {
                         saida.close();
                         entrada.close();
                         acbr.close();
-                        resp[0] = "OK";
+                        resp[0] = OK;
                         resp[1] = "FIM";
                     } else {
                         String dados = lerDados();
                         if ("".equals(dados)) {
-                            resp[0] = "OK";
+                            resp[0] = OK;
                         } else if (dados.contains(":")) {
                             String[] ret = dados.split(":", 2);
                             resp[0] = ret[0].trim();
                             resp[1] = ret[1].trim();
                         } else {
-                            resp[0] = "OK";
+                            resp[0] = OK;
                             resp[1] = dados.trim();
                         }
                     }
                 } catch (Exception ex) {
                     log.error("Nao foi possivel enviar ou receber comando do ACBrMonitor" + acao.toString(), ex);
-                    resp[0] = "ERRO";
+                    resp[0] = ERRO;
                     resp[1] = "Nao foi possivel enviar ou receber comando do ACBrMonitor";
                 } finally {
                     if (async != null) {

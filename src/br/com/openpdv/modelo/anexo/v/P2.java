@@ -1,13 +1,14 @@
-package br.com.openpdv.modelo;
+package br.com.openpdv.modelo.anexo.v;
+
+import br.com.openpdv.modelo.anexo.Bean;
 
 /**
- * Classe que representa o modelo de produto.
+ * Classe que representa o modelo P2 do anexo V.
  *
  * @author Pedro H. Lira
  */
-public class Produto {
+public class P2 extends Bean {
 
-    private String padrao;
     private String cnpj;
     private String codigo;
     private String descricao;
@@ -17,20 +18,13 @@ public class Produto {
     private String tributacao;
     private Double aliquota;
     private Double valor;
-    private Double estoque;
-    private String mensuracao;
 
-    //GETs e SETs
-    public String getPadrao() {
-        return padrao;
-    }
-
-    public void setPadrao(String padrao) {
-        this.padrao = padrao;
+    public P2() {
+        padrao = "P2";
     }
 
     public Double getAliquota() {
-        return aliquota * 100;
+        return aliquota * 100; // precisa informar os decimais sem separador
     }
 
     public void setAliquota(Double aliquota) {
@@ -59,14 +53,6 @@ public class Produto {
 
     public void setDescricao(String descricao) {
         this.descricao = descricao;
-    }
-
-    public Double getEstoque() {
-        return estoque * 1000;
-    }
-
-    public void setEstoque(Double estoque) {
-        this.estoque = estoque;
     }
 
     public String getIat() {
@@ -102,18 +88,10 @@ public class Produto {
     }
 
     public Double getValor() {
-        return valor * 100;
+        return valor * 100; // precisa informar os decimais sem separador
     }
 
     public void setValor(Double valor) {
         this.valor = valor;
-    }
-
-    public String getMensuracao() {
-        return Math.abs(estoque) == estoque ? "+" : "-";
-    }
-
-    public void setMensuracao(String mensuracao) {
-        this.mensuracao = mensuracao;
     }
 }

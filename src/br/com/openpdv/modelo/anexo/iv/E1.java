@@ -1,34 +1,24 @@
-package br.com.openpdv.modelo;
+package br.com.openpdv.modelo.anexo.iv;
 
+import br.com.openpdv.modelo.anexo.Cabecalho;
 import java.util.Date;
 
 /**
- * Classe que representa os dados do modelo para geracao do Estoque.
+ * Classe que representa o modelo E1 do anexo IV.
  *
  * @author Pedro H. Lira
  */
-public class Estoque {
+public class E1 extends Cabecalho {
 
-    private String padrao;
-    private String cnpj;
-    private String ie;
-    private String im;
-    private String razao;
     private String fabricacao;
     private String mfAdicional;
     private String tipoEcf;
     private String marcaEcf;
     private String modeloEcf;
     private Date data;
-    private int total;
-
-    //GETs e SETs
-    public String getCnpj() {
-        return cnpj;
-    }
-
-    public void setCnpj(String cnpj) {
-        this.cnpj = cnpj;
+    
+    public E1() {
+        padrao = "E1";
     }
 
     public Date getData() {
@@ -45,22 +35,6 @@ public class Estoque {
 
     public void setFabricacao(String fabricacao) {
         this.fabricacao = fabricacao;
-    }
-
-    public String getIe() {
-        return ie;
-    }
-
-    public void setIe(String ie) {
-        this.ie = ie;
-    }
-
-    public String getIm() {
-        return im;
-    }
-
-    public void setIm(String im) {
-        this.im = im;
     }
 
     public String getMarcaEcf() {
@@ -87,35 +61,11 @@ public class Estoque {
         this.modeloEcf = modeloEcf;
     }
 
-    public String getPadrao() {
-        return padrao;
-    }
-
-    public void setPadrao(String padrao) {
-        this.padrao = padrao;
-    }
-
-    public String getRazao() {
-        return razao;
-    }
-
-    public void setRazao(String razao) {
-        this.razao = razao;
-    }
-
     public String getTipoEcf() {
         return tipoEcf;
     }
 
     public void setTipoEcf(String tipoEcf) {
         this.tipoEcf = tipoEcf;
-    }
-
-    public int getTotal() {
-        return total;
-    }
-
-    public void setTotal(int total) {
-        this.total = total;
     }
 }

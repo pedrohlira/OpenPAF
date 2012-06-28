@@ -63,6 +63,22 @@ public enum EComandoECF {
      */
     ECF_NumCRO,
     /**
+     * Retorna número do CCF (Contador de Cupom Fiscal).
+     */
+    ECF_NumCCF,
+    /**
+     * Retorna número do GRG (Contador Relatórios Gerenciais).
+     */
+    ECF_NumGRG,
+    /**
+     * Retorna número do GNF (Contador de Não Fiscal).
+     */
+    ECF_NumGNF,
+    /**
+     * Retorna número do CDC (Contador de Crédito Débito).
+     */
+    ECF_NumCDC,
+    /**
      * Retorna número do CRZ.
      */
     ECF_NumCRZ,
