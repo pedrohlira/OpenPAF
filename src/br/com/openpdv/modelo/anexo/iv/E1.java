@@ -11,7 +11,7 @@ import java.util.Date;
 public class E1 extends Cabecalho {
 
     private String fabricacao;
-    private String mfAdicional;
+    private char mfAdicional;
     private String tipoEcf;
     private String marcaEcf;
     private String modeloEcf;
@@ -45,11 +45,11 @@ public class E1 extends Cabecalho {
         this.marcaEcf = marcaEcf;
     }
 
-    public String getMfAdicional() {
+    public char getMfAdicional() {
         return mfAdicional;
     }
 
-    public void setMfAdicional(String mfAdicional) {
+    public void setMfAdicional(char mfAdicional) {
         this.mfAdicional = mfAdicional;
     }
 

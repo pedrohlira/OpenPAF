@@ -1,8 +1,7 @@
 package br.com.openpdv.controlador;
 
-import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -15,90 +14,75 @@ import org.apache.log4j.Logger;
  *
  * @author Pedro H. Lira
  */
-public class ECF {
+public final class ECF {
 
-    private static ECF ecf;
-    private static Logger log;
-    private Socket acbr;
-    private PrintWriter saida = null;
-    private BufferedReader entrada = null;
-    private AsyncCallback<String[]> async;
-    public static final String linhaSimples = "------------------------------------------------";
-    public static final String linhaDupla = "================================================";
+    /**
+     * Numero de colunas.
+     */
+    public static int COL;
+    /**
+     * Linha Simples [---].
+     */
+    public static String LS;
+    /**
+     * Linha Dupla [===].
+     */
+    public static String LD;
+    /**
+     * Separador de linhas
+     */
+    public static final String SL = "|";
+    /**
+     * Expressao OK.
+     */
     public static final String OK = "OK";
+    /**
+     * Expressao ERRO.
+     */
     public static final String ERRO = "ERRO";
-    
+    private static Logger log;
+    private static Socket acbr;
+    private static PrintWriter saida = null;
+    private static DataInputStream entrada = null;
+
     /**
      * Construtor padrao.
      */
-    public ECF() {
-        log = Logger.getLogger(ECF.class);
-    }
-
-    /**
-     * Metodo que retorna a instancia unica de ECF.
-     *
-     * @return o objeto ECF.
-     */
-    public static ECF getInstancia() {
-        return getInstancia(null);
-    }
-
-    /**
-     * Metodo que retorna a instancia unica de ECF.
-     *
-     * @param async informe a classe que vai responder ao metodo de resposta.
-     * @return o objeto ECF.
-     */
-    public static ECF getInstancia(AsyncCallback<String[]> async) {
-        if (ecf == null) {
-            ecf = new ECF();
-        }
-        ecf.async = async;
-        return ecf;
+    private ECF() {
     }
 
     /**
      * Metodo que realiza a conexao com o ECF.
      *
+     * @param servidor a URL ou IP do servidor.
+     * @param porta o numero da porta de comunicacao. milisegundos.
      * @throws Exception dispara um excecao caso nao cosiga.
      */
-    public void conectar(String servidor, int porta) throws Exception {
+    public static void conectar(String servidor, int porta) throws Exception {
+        log = Logger.getLogger(ECF.class);
         try {
             InetAddress ip = InetAddress.getByName(servidor);
             SocketAddress url = new InetSocketAddress(ip, porta);
             acbr = new Socket();
-            acbr.connect(url, 2000);
+            acbr.connect(url, 10000);
             saida = new PrintWriter(acbr.getOutputStream());
-            entrada = new BufferedReader(new InputStreamReader(acbr.getInputStream()));
+            entrada = new DataInputStream(acbr.getInputStream());
 
-            Thread.sleep(500);
             lerDados();
-        } catch (IOException | InterruptedException ex) {
+        } catch (IOException ex) {
             log.error("Nao foi possivel se conectar ao ACBrMonitor", ex);
             throw new Exception("Verifique se as configuraõçes estão corretas e se está ativo no sistema.");
         }
     }
 
     /**
-     * Metodo que envia um comando ao ECF que repassa para a ECF.
-     *
-     * @param comando um EComandoACBr que representa um comando aceito.
-     * @param parametros um sequencia de parametros, opcionais usado somente em
-     * alguns comandos.
-     */
-    public String[] enviar(EComandoACBr comando, String... parametros) {
-        return enviar(comando.toString(), parametros);
-    }
-
-    /**
-     * Metodo que envia um comando ao ECF que repassa para a ECF.
+     * Metodo que envia um comando ao ACBr que repassa para a ECF.
      *
      * @param comando um EComandoECF que representa um comando aceito.
      * @param parametros um sequencia de parametros, opcionais usado somente em
      * alguns comandos.
      */
-    public String[] enviar(EComandoECF comando, String... parametros) {
+    public static String[] enviar(EComandoECF comando, String... parametros) {
         return enviar(comando.toString(), parametros);
     }
 
@@ -109,82 +93,140 @@ public class ECF {
      * @param parametros um sequencia de parametros, opcionais usado somente em
      * alguns comandos.
      */
-    private String[] enviar(final String comando, final String... parametros) {
-        final String[] resp = new String[]{"", ""};
+    private static String[] enviar(String comando, String... parametros) {
+        String[] resp = new String[]{"", ""};
+        StringBuilder acao = new StringBuilder(comando);
 
-        Thread fluxo = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                StringBuilder acao = new StringBuilder(comando);
-                if (parametros != null && parametros.length > 0) {
-                    acao.append("(");
-                    for (String param : parametros) {
-                        acao.append(param).append(",");
-                    }
-                    acao.deleteCharAt(acao.length() - 1).append(")");
-                }
-
-                try {
-                    saida.print(acao.toString() + '\r' + '\n' + "." + '\r' + '\n');
-                    saida.flush();
-
-                    if ("SAIR".equals(comando.toString())) {
-                        saida.close();
-                        entrada.close();
-                        acbr.close();
-                        resp[0] = OK;
-                        resp[1] = "FIM";
-                    } else {
-                        String dados = lerDados();
-                        if ("".equals(dados)) {
-                            resp[0] = OK;
-                        } else if (dados.contains(":")) {
-                            String[] ret = dados.split(":", 2);
-                            resp[0] = ret[0].trim();
-                            resp[1] = ret[1].trim();
-                        } else {
-                            resp[0] = OK;
-                            resp[1] = dados.trim();
-                        }
-                    }
-                } catch (Exception ex) {
-                    log.error("Nao foi possivel enviar ou receber comando do ACBrMonitor" + acao.toString(), ex);
-                    resp[0] = ERRO;
-                    resp[1] = "Nao foi possivel enviar ou receber comando do ACBrMonitor";
-                } finally {
-                    if (async != null) {
-                        async.sucesso(resp);
-                    }
-                }
+        if (parametros != null && parametros.length > 0) {
+            acao.append("(");
+            for (String param : parametros) {
+                acao.append(param).append(",");
             }
-        });
-
-        // se nao passou o monitor chama o metodo fora da thread.
-        if (async == null) {
-            fluxo.run();
-            return resp;
-        } else {
-            fluxo.start();
-            return null;
+            acao.deleteCharAt(acao.length() - 1).append(")");
         }
+
+        try {
+            saida.print(acao.toString() + "\r\n.\r\n");
+            saida.flush();
+
+            String dados = lerDados();
+            if ("".equals(dados)) {
+                resp[0] = OK;
+            } else if (dados.contains(":")) {
+                String[] ret = dados.split(":", 2);
+                resp[0] = ret[0].trim();
+                resp[1] = ret[1].trim();
+            } else {
+                resp[0] = OK;
+                resp[1] = dados.trim();
+            }
+        } catch (Exception ex) {
+            log.error("Nao foi possivel enviar ou receber comando ao ECF" + acao.toString(), ex);
+            resp[0] = ERRO;
+            resp[1] = "Nao foi possivel enviar ou receber comando ao ECF";
+        }
+        return resp;
     }
 
     /**
      * Metodo que faz a leitura do retorno do ECF.
      *
      * @return uma String da resposta.
-     * @throws IOException dispara uma excecao caso nao consiga ler.
      */
-    private String lerDados() throws IOException {
-        short b = -1;
-        String retorno = "";
-        while (b != 3) {
-            b = (short) entrada.read();
-            if (b != 3) {
-                retorno += (char) b;
+    private static String lerDados() {
+        StringBuilder sb = new StringBuilder();
+        try {
+            byte b;
+            while ((b = (byte) entrada.read()) != 3) {
+                sb.append(new String(new byte[]{b}));
             }
+            return sb.toString();
+        } catch (IOException ex) {
+            return ERRO + ":" + ex.getMessage();
         }
-        return retorno;
+    }
+
+    /**
+     * Metodo que faz a validacao se o sistema consegue ativar a ECF.
+     *
+     * @throws Exception dispara uma excecao caso nao consiga ativar.
+     */
+    public static void ativar() throws Exception {
+        String[] resp = enviar(EComandoECF.ECF_Ativar);
+        if (ECF.ERRO.equals(resp[0])) {
+            throw new Exception(resp[1]);
+        }
+        // pega as colunas e forma as linhas
+        resp = enviar(EComandoECF.ECF_Colunas);
+        ECF.COL = ECF.OK.equals(resp[0]) ? Integer.valueOf(resp[1]) : 48;
+        StringBuilder sb1 = new StringBuilder();
+        StringBuilder sb2 = new StringBuilder();
+
+        for (int i = 0; i < ECF.COL; i++) {
+            sb1.append("-");
+            sb2.append("=");
+        }
+
+        ECF.LS = sb1.toString();
+        ECF.LD = sb2.toString();
+    }
+
+    /**
+     * Metodo que retorna o estado do ECF.
+     *
+     * @return o tipo do estado do ECF.
+     * @throws OpenPdvException dispara uma excecao caso nao consiga executar.
+     */
+    public static EEstadoECF validarEstado() throws Exception {
+        String[] resp = enviar(EComandoECF.ECF_Estado);
+        if (ECF.OK.equals(resp[0])) {
+            return EEstadoECF.valueOf(resp[1]);
+        } else {
+            throw new Exception(resp[1]);
+        }
+    }
+
+    /**
+     * Metodo que faz a validacao se o ECF conectado e o autorizado pelo
+     * sistema.
+     *
+     * @throws OpenPdvException dispara uma excecao caso nao seja o ECF
+     * esperado.
+     */
+    public static void validarSerial() throws Exception {
+        String[] resp = enviar(EComandoECF.ECF_NumSerie);
+        if (ECF.OK.equals(resp[0])) {
+            if (!PAF.AUXILIAR.getProperty("ecf.serie").contains(resp[1])) {
+                throw new Exception("O ECF conectado tem o Número de Série = " + resp[1]
+                        + "\nO número de série do ECF autorizado deste PAF é = " + PAF.AUXILIAR.getProperty("ecf.serie"));
+            }
+        } else {
+            throw new Exception(resp[1]);
+        }
+    }
+
+    /**
+     * Metodo que faz a validacao se o ultimo numero do GT e o mesmo do ECF,
+     * caso nao seja fara as tentativas de arrumar.
+     *
+     * @throws OpenPdvException dispara uma excecao caso nao consiga arrumar o
+     * GT em nenhuma das formas autorizadas.
+     */
+    public static void validarGT() throws Exception {
+        String[] resp = enviar(EComandoECF.ECF_GrandeTotal);
+        if (ECF.OK.equals(resp[0])) {
+            try {
+                double gt1 = Double.valueOf(resp[1].replace(",", "."));
+                double gt2 = Double.valueOf(PAF.AUXILIAR.getProperty("ecf.gt").replace(",", "."));
+
+                if (gt1 != gt2) {
+                    throw new Exception("O ECF conectado tem o Grande Total = " + gt1 + "\nO arquivo criptografado tem o Grande Total = " + gt2);
+                }
+            } catch (Exception ex) {
+                throw new Exception(ex.getMessage());
+            }
+        } else {
+            throw new Exception(resp[1]);
+        }
     }
 }

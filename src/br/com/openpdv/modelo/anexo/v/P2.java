@@ -13,9 +13,9 @@ public class P2 extends Bean {
     private String codigo;
     private String descricao;
     private String unidade;
-    private String iat;
-    private String ippt;
-    private String tributacao;
+    private char iat;
+    private char ippt;
+    private char tributacao;
     private Double aliquota;
     private Double valor;
 
@@ -55,27 +55,27 @@ public class P2 extends Bean {
         this.descricao = descricao;
     }
 
-    public String getIat() {
+    public char getIat() {
         return iat;
     }
 
-    public void setIat(String iat) {
+    public void setIat(char iat) {
         this.iat = iat;
     }
 
-    public String getIppt() {
+    public char getIppt() {
         return ippt;
     }
 
-    public void setIppt(String ippt) {
+    public void setIppt(char ippt) {
         this.ippt = ippt;
     }
 
-    public String getTributacao() {
+    public char getTributacao() {
         return tributacao;
     }
 
-    public void setTributacao(String tributacao) {
+    public void setTributacao(char tributacao) {
         this.tributacao = tributacao;
     }
 

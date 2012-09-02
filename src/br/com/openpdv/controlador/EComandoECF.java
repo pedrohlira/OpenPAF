@@ -95,6 +95,10 @@ public enum EComandoECF {
      */
     ECF_NumVersao,
     /**
+     * Retorna a data do Software do ECF.
+     */
+    ECF_DataHoraSB,
+    /**
      * Retorna data do movimento do ECF.
      */
     ECF_DataMovimento,
@@ -164,7 +168,7 @@ public enum EComandoECF {
      *
      * <b>T</b> = Tipo da Alíquota, ( "T" = ICMS, "S" = ISS)<br>
      *
-     * <b>999.99</b> = Valor da Alíquota<br>br>
+     * <b>999.99</b> = Valor da Alíquota<br><br>
      *
      * <b>Nota:</b>Esse comando quando executado a primeira vez, se comunica com
      * o ECF a fim de carregar a tabela de alíquotas. Após a carga, elas são
@@ -341,6 +345,15 @@ public enum EComandoECF {
      * <b>cFPG</b> - O nome da forma de pagamento.<br>
      */
     ECF_Suprimento,
+    /**
+     * Realiza um corte no papel.<br><br>
+     *
+     * <b>Parâmetros:</b><br>
+     *
+     * <b>bCorteParcial</b> - Parâmetro Opcional. Se informado como True efetua
+     * corte parcial do papel no ECF para equipamentos com guilhotina.
+     */
+    ECF_CortaPapel,
     /**
      * Se não puder abrir um Cupom Fiscal, retorna um erro com o motivo, caso
      * contrário retorna OK.
@@ -714,11 +727,24 @@ public enum EComandoECF {
      */
     ECF_CorrigeEstadoErro,
     /**
-     * Método que abre o relatorio gerencial.
+     * Método que abre o relatorio gerencial.<br><br>
+     *
+     * <b>Parâmetros:</b><br>
+     *
+     * <b>cNome</b> - O nome do relatorio cadastro no ECF (nao informar para
+     * usar o padrao).
      */
     ECF_AbreRelatorioGerencial,
     /**
-     * Método que retorna "True" se esta com o relatorio gerencial aberto.
+     * Método que envia varias linhas para impressao no relatorio, permitindo
+     * ainda informar quantas vias do mesmo.<br><br>
+     *
+     * <b>Parâmetros:</b><br>
+     *
+     * <b>cTexto</b> - Um texto com o conteudo a ser impresso, com as linhas
+     * separandas por | (pipe).<br>
+     *
+     * <b>nVias</b> - O numero de vias que deseja imprimir.
      */
     ECF_RelatorioGerencial,
     /**
@@ -726,7 +752,8 @@ public enum EComandoECF {
      *
      * <b>Parâmetros:</b><br>
      *
-     * <b>cLinha</b> Um texto a ser impresso em uma linha.
+     * <b>cLinha</b> Um texto a ser impresso em uma linha ou enviado com |
+     * (pipe) imprime varias linhas.
      */
     ECF_LinhaRelatorioGerencial,
     /**
@@ -746,8 +773,8 @@ public enum EComandoECF {
      *
      * <b>cCodFormaPagto</b> Número do código de pagamento.<br>
      *
-     * <br>cCodComprovanteNaoFiscal</b> Caso seja Não Fiscal informar o código
-     * do comprovante, caso contrário ignorar este campo.<br>
+     * <b>cCodComprovanteNaoFiscal</b> Caso seja Não Fiscal informar o código do
+     * comprovante, caso contrário ignorar este campo.<br>
      *
      * <b>nValor</b> O valor do documento.
      */
@@ -757,11 +784,15 @@ public enum EComandoECF {
      *
      * <b>Parâmetros:</b><br>
      *
-     * <b>cLinha</b> Um texto a ser impresso em uma linha.
+     * <b>cLinha</b> Um texto a ser impresso em uma linha ou enviado com |
+     * (pipe) imprime varias linhas.
      */
     ECF_LinhaCupomVinculado,
     /**
      * @see #ECF_AbreCupomVinculado
+     *
+     * Mais um parametro de texto no final com as linhas a serem impressas
+     * separadas por | (pipe).
      */
     ECF_CupomVinculado,
     /**

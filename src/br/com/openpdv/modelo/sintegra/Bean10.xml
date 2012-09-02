@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beanio xmlns="http://www.beanio.org/2011/01" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.beanio.org/2011/01 http://www.beanio.org/2011/01/mapping.xsd">
+    <stream name="SINTEGRA" format="fixedlength">
+        <record name="Dados" minOccurs="1" maxOccurs="1" class="br.com.openpdv.modelo.sintegra.Dados10">
+            <field name="tipo" type="int" length="2"/>
+            <field name="cnpj" type="string" length="14" justify="right" padding="0"/>
+            <field name="ie" type="string" length="14" justify="left" padding=" "/>
+            <field name="razao" type="string" length="35" justify="left" padding=" "/>
+            <field name="municipio" type="string" length="30" justify="left" padding=" "/>
+            <field name="uf" type="string" length="2" justify="right" padding="0"/>
+            <field name="fax" type="string" length="10" justify="right" padding="0"/>
+            <field name="inicio" type="date" length="8" justify="right" padding="0" format="yyyyMMdd"/>
+            <field name="fim" type="date" length="8" justify="right" padding="0" format="yyyyMMdd"/>
+            <field name="convenio" type="string" length="1" justify="left" padding=" "/>
+            <field name="natureza" type="string" length="1" justify="left" padding=" "/>
+            <field name="finalidade" type="string" length="1" justify="left" padding=" "/>
+        </record>
+    </stream>
+</beanio>

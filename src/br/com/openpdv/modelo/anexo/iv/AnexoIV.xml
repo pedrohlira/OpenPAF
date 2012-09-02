@@ -8,7 +8,7 @@
             <field name="im" type="string" length="14" justify="left" padding=" "/>
             <field name="razao" type="string" length="50" justify="left" padding=" "/>
             <field name="fabricacao" type="string" length="20" justify="left" padding=" "/>
-            <field name="mfAdicional" type="string" length="1" justify="left" padding=" "/>
+            <field name="mfAdicional" type="char" length="1" justify="left" padding=" "/>
             <field name="tipoEcf" type="string" length="7" justify="left" padding=" "/>
             <field name="marcaEcf" type="string" length="20" justify="left" padding=" "/>
             <field name="modeloEcf" type="string" length="20" justify="left" padding=" "/>
@@ -21,7 +21,7 @@
             <field name="codigo" type="string" length="14" justify="left" padding=" "/>
             <field name="descricao" type="string" length="50" justify="left" padding=" "/>
             <field name="unidade" type="string" length="6" justify="left" padding=" "/>
-            <field name="mensuracao" type="string" length="1"/>
+            <field name="mensuracao" type="char" length="1" justify="left" padding=" "/>
             <field name="estoque" type="double" length="9" format="#0" justify="right" padding="0"/>
         </record>
         <record name="E9" minOccurs="1" maxOccurs="1" class="br.com.openpdv.modelo.anexo.iv.E9">

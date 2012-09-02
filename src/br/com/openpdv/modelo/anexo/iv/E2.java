@@ -15,7 +15,7 @@ public class E2 extends Bean {
     private String unidade;
     private Double valor;
     private Double estoque;
-    private String mensuracao;
+    private char mensuracao;
     
     public E2() {
         padrao = "E2";
@@ -69,11 +69,11 @@ public class E2 extends Bean {
         this.estoque = estoque;
     }
 
-    public String getMensuracao() {
-        return Math.abs(estoque) == estoque ? "+" : "-";
+    public char getMensuracao() {
+        return Math.abs(estoque) == estoque ? '+' : '-';
     }
 
-    public void setMensuracao(String mensuracao) {
+    public void setMensuracao(char mensuracao) {
         this.mensuracao = mensuracao;
     }
 }

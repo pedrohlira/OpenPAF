@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beanio xmlns="http://www.beanio.org/2011/01" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.beanio.org/2011/01 http://www.beanio.org/2011/01/mapping.xsd">
+    <stream name="SINTEGRA" format="fixedlength">
+        <record name="Dados" minOccurs="1" maxOccurs="1" class="br.com.openpdv.modelo.sintegra.Dados75">
+            <field name="tipo" type="int" length="2"/>
+            <field name="inicio" type="date" length="8" justify="right" padding="0" format="yyyyMMdd"/>
+            <field name="fim" type="date" length="8" justify="right" padding="0" format="yyyyMMdd"/>
+            <field name="codigo" type="string" length="14" justify="left" padding=" "/>
+            <field name="ncm" type="string" length="8" justify="left" padding=" "/>
+            <field name="descricao" type="string" length="53" justify="left" padding=" "/>
+            <field name="und" type="string" length="6" justify="left" padding=" "/>
+            <field name="aliq_ipi" type="double" length="5" format="#0" justify="right" padding="0"/>
+            <field name="aliq_icms" type="double" length="4" format="#0" justify="right" padding="0"/>
+            <field name="reducao" type="double" length="5" format="#0" justify="right" padding="0"/>
+            <field name="base_icmsST" type="double" length="13" format="#0" justify="right" padding="0"/>
+        </record>
+    </stream>
+</beanio>

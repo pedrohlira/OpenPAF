@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beanio xmlns="http://www.beanio.org/2011/01" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.beanio.org/2011/01 http://www.beanio.org/2011/01/mapping.xsd">
+    <stream name="SINTEGRA" format="fixedlength">
+        <record name="Dados" minOccurs="1" maxOccurs="1" class="br.com.openpdv.modelo.sintegra.Dados60A">
+            <field name="tipo" type="int" length="2"/>
+            <field name="subtipo" type="string" length="1" trim="true"/>
+            <field name="data" type="date" length="8" justify="right" padding="0" format="yyyyMMdd"/>
+            <field name="serie" type="string" length="20" justify="left" padding=" "/>
+            <field name="totalizador" type="string" length="4" justify="left" padding=" "/>
+            <field name="valor" type="double" length="12" format="#0" justify="right" padding="0"/>
+            <field name="brancos" type="string" length="79" justify="left" padding=" "/>
+        </record>
+    </stream>
+</beanio>
