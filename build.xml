@@ -7,8 +7,8 @@
 <!-- the Compile on Save feature is turned off for the project. -->
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
-<project name="PAF_ECF_TEF" default="default" basedir=".">
-    <description>Builds, tests, and runs the project PAF_ECF_TEF.</description>
+<project name="OpenPAF" default="default" basedir=".">
+    <description>Builds, tests, and runs the project OpenPAF.</description>
     <import file="nbproject/build-impl.xml"/>
     <!--
 
@@ -59,7 +59,7 @@
 
     An example of overriding the target for project execution could look like this:
 
-        <target name="run" depends="PAF_ECF_TEF-impl.jar">
+        <target name="run" depends="OpenPAF-impl.jar">
             <exec dir="bin" executable="launcher.exe">
                 <arg file="${dist.jar}"/>
             </exec>
@@ -71,4 +71,8 @@
     nbproject/build-impl.xml file. 
 
     -->
+    
+    <target name="-post-jar">
+        <delete file="${dist.jar.dir}/README.TXT"/>
+    </target>
 </project>

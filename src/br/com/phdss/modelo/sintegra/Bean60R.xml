@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beanio xmlns="http://www.beanio.org/2011/01" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.beanio.org/2011/01 http://www.beanio.org/2011/01/mapping.xsd">
+    <stream name="SINTEGRA" format="fixedlength">
+        <record name="Dados" minOccurs="1" maxOccurs="1" class="br.com.phdss.modelo.sintegra.Dados60R">
+            <field name="tipo" type="int" length="2"/>
+            <field name="subtipo" type="string" length="1" trim="true"/>
+            <field name="mesAno" type="int" length="6" justify="right" padding="0"/>
+            <field name="codigo" type="string" length="14" justify="left" padding=" "/>
+            <field name="qtd" type="double" length="13" format="#0" justify="right" padding="0"/>
+            <field name="liquido" type="double" length="16" format="#0" justify="right" padding="0"/>
+            <field name="base_icms" type="double" length="16" format="#0" justify="right" padding="0"/>
+            <field name="tributacao" type="string" length="4" justify="left" padding=" "/>
+            <field name="brancos" type="string" length="54" justify="left" padding=" "/>
+        </record>
+    </stream>
+</beanio>

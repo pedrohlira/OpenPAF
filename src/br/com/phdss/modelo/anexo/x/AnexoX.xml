@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beanio xmlns="http://www.beanio.org/2011/01" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.beanio.org/2011/01 http://www.beanio.org/2011/01/mapping.xsd">
+    <stream name="AnexoX" format="fixedlength">
+        <record name="N1" minOccurs="1" maxOccurs="1" class="br.com.phdss.modelo.anexo.x.N1">
+            <field name="padrao" type="string" length="2" default="N1"/>
+            <field name="cnpj" type="string" length="14" justify="right" padding="0"/>
+            <field name="ie" type="string" length="14" justify="left" padding=" " />
+            <field name="im" type="string" length="14" justify="left" padding=" "/>
+            <field name="razao" type="string" length="50" justify="left" padding=" "/>
+        </record>
+        <record name="N2" minOccurs="1" maxOccurs="1" class="br.com.phdss.modelo.anexo.x.N2">
+            <field name="padrao" type="string" length="2" default="N2"/>
+            <field name="laudo" type="string" length="10" justify="left" padding=" "/>
+            <field name="nome" type="string" length="50" justify="left" padding=" " />
+            <field name="versao" type="string" length="10" justify="left" padding=" "/>
+        </record>
+        <record name="N3" minOccurs="0" maxOccurs="unbounded" class="br.com.phdss.modelo.anexo.x.N3">
+            <field name="padrao" type="string" length="2" default="N3"/>
+            <field name="nome" type="string" length="50" justify="left" padding=" "/>
+            <field name="md5" type="string" length="32" justify="left" padding=" "/>
+        </record>
+        <record name="N9" minOccurs="1" maxOccurs="1" class="br.com.phdss.modelo.anexo.x.N9">
+            <field name="padrao" type="string" length="2" default="N9"/>
+            <field name="cnpj" type="string" length="14" justify="right" padding="0"/>
+            <field name="ie" type="string" length="14" justify="left" padding=" " />
+            <field name="total" type="int" length="6" justify="right" padding="0"/>
+        </record>
+    </stream>
+</beanio>

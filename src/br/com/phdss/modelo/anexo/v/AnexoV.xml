@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beanio xmlns="http://www.beanio.org/2011/01" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.beanio.org/2011/01 http://www.beanio.org/2011/01/mapping.xsd">
+    <stream name="AnexoV" format="fixedlength">
+        <record name="P1" minOccurs="1" maxOccurs="1" class="br.com.phdss.modelo.anexo.v.P1">
+            <field name="padrao" type="string" length="2" default="P1"/>
+            <field name="cnpj" type="string" length="14" justify="right" padding="0"/>
+            <field name="ie" type="string" length="14" justify="left" padding=" " />
+            <field name="im" type="string" length="14" justify="left" padding=" "/>
+            <field name="razao" type="string" length="50" justify="left" padding=" "/>
+        </record>
+        <record name="P2" minOccurs="0" maxOccurs="unbounded" class="br.com.phdss.modelo.anexo.v.P2">
+            <field name="padrao" type="string" length="2" default="P2"/>
+            <field name="cnpj" type="string" length="14" justify="right" padding="0"/>
+            <field name="codigo" type="string" length="14" justify="left" padding=" "/>
+            <field name="descricao" type="string" length="50" justify="left" padding=" "/>
+            <field name="unidade" type="string" length="6" justify="left" padding=" "/>
+            <field name="iat" type="char" length="1" justify="left" padding=" "/>
+            <field name="ippt" type="char" length="1" justify="left" padding=" "/>
+            <field name="tributacao" type="char" length="1" justify="left" padding=" "/>
+            <field name="aliquota" type="double" length="4" format="#0" justify="right" padding="0"/>
+            <field name="valor" type="double" length="12" format="#0" justify="right" padding="0"/>
+        </record>
+        <record name="P9" minOccurs="1" maxOccurs="1" class="br.com.phdss.modelo.anexo.v.P9">
+            <field name="padrao" type="string" length="2" default="P9"/>
+            <field name="cnpj" type="string" length="14" justify="right" padding="0"/>
+            <field name="ie" type="string" length="14" justify="left" padding=" " />
+            <field name="total" type="int" length="6" justify="right" padding="0"/>
+        </record>
+    </stream>
+</beanio>

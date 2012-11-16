@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beanio xmlns="http://www.beanio.org/2011/01" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.beanio.org/2011/01 http://www.beanio.org/2011/01/mapping.xsd">
+    <stream name="AnexoVI" format="fixedlength">
+        <record name="R01" minOccurs="1" maxOccurs="1" class="br.com.phdss.modelo.anexo.vi.R01">
+            <field name="padrao" type="string" length="3" default="R01"/>
+            <field name="serie" type="string" length="20" justify="left" padding=" "/>
+            <field name="mfAdicional" type="string" length="1" justify="left" padding=" " />
+            <field name="tipoECF" type="string" length="7" justify="left" padding=" "/>
+            <field name="marcaECF" type="string" length="20" justify="left" padding=" "/>
+            <field name="modeloECF" type="string" length="20" justify="left" padding=" "/>
+            <field name="versaoSB" type="string" length="10" justify="left" padding=" "/>
+            <field name="dataSB" type="date" length="8" format="yyyyMMdd" justify="left" padding=" "/>
+            <field name="dataSB" type="date" length="6" format="HHmmss" justify="left" padding=" "/>
+            <field name="numeroECF" type="int" length="3" justify="right" padding="0"/>
+            <field name="empresaCNPJ" type="string" length="14" justify="right" padding="0"/>
+            <field name="empresaIE" type="string" length="14" justify="left" padding=" "/>
+            <field name="shCNPJ" type="string" length="14" justify="right" padding="0"/>
+            <field name="shIE" type="string" length="14" justify="left" padding=" "/>
+            <field name="shIM" type="int" length="14" justify="right" padding="0"/>
+            <field name="shRazao" type="string" length="40" justify="left" padding=" "/>
+            <field name="pafNome" type="string" length="40" justify="left" padding=" "/>
+            <field name="pafVersao" type="string" length="10" justify="left" padding=" "/>
+            <field name="pafMD5" type="string" length="32" justify="left" padding=" "/>
+            <field name="inicio" type="date" length="8" format="yyyyMMdd" justify="left" padding=" "/>
+            <field name="fim" type="date" length="8" format="yyyyMMdd" justify="left" padding=" "/>
+            <field name="pafER" type="string" length="4" justify="left" padding=" "/>
+        </record>
+        <record name="R02" minOccurs="0" maxOccurs="unbounded" class="br.com.phdss.modelo.anexo.vi.R02">
+            <field name="padrao" type="string" length="3" default="R02"/>
+            <field name="serie" type="string" length="20" justify="left" padding=" "/>
+            <field name="mfAdicional" type="string" length="1" justify="left" padding=" " />
+            <field name="modeloECF" type="string" length="20" justify="left" padding=" "/>
+            <field name="usuario" type="int" length="2" justify="right" padding="0"/>
+            <field name="crz" type="int" length="6" justify="right" padding="0"/>
+            <field name="coo" type="int" length="6" justify="right" padding="0"/>
+            <field name="cro" type="int" length="6" justify="right" padding="0"/>
+            <field name="movimento" type="date" length="8" format="yyyyMMdd" justify="left" padding=" "/>
+            <field name="emissao" type="date" length="8" format="yyyyMMdd" justify="left" padding=" "/>
+            <field name="emissao" type="date" length="6" format="HHmmss" justify="left" padding=" "/>
+            <field name="bruto" type="double" length="14" format="#0" justify="right" padding="0"/>
+            <field name="issqn" type="char" length="1" justify="left" padding=" " />
+        </record>
+        <record name="R03" minOccurs="0" maxOccurs="unbounded" class="br.com.phdss.modelo.anexo.vi.R03">
+            <field name="padrao" type="string" length="3" default="R03"/>
+            <field name="serie" type="string" length="20" justify="left" padding=" "/>
+            <field name="mfAdicional" type="string" length="1" justify="left" padding=" " />
+            <field name="modeloECF" type="string" length="20" justify="left" padding=" "/>
+            <field name="usuario" type="int" length="2" justify="right" padding="0"/>
+            <field name="crz" type="int" length="6" justify="right" padding="0"/>
+            <field name="totalizador" type="string" length="7" justify="left" padding=" "/>
+            <field name="valor" type="double" length="13" format="#0" justify="right" padding="0"/>
+        </record>
+        <record name="R04" minOccurs="0" maxOccurs="unbounded" class="br.com.phdss.modelo.anexo.vi.R04">
+            <field name="padrao" type="string" length="3" default="R04"/>
+            <field name="serie" type="string" length="20" justify="left" padding=" "/>
+            <field name="mfAdicional" type="string" length="1" justify="left" padding=" " />
+            <field name="modeloECF" type="string" length="20" justify="left" padding=" "/>
+            <field name="usuario" type="int" length="2" justify="right" padding="0"/>
+            <field name="documento" type="int" length="6" justify="right" padding="0"/>
+            <field name="coo" type="int" length="6" justify="right" padding="0"/>
+            <field name="data" type="date" length="8" format="yyyyMMdd" justify="left" padding=" "/>
+            <field name="bruto" type="double" length="14" format="#0" justify="right" padding="0"/>
+            <field name="desconto" type="double" length="13" format="#0" justify="right" padding="0"/>
+            <field name="tipoDesconto" type="char" length="1" justify="left" padding=" " />
+            <field name="acrescimo" type="double" length="13" format="#0" justify="right" padding="0"/>
+            <field name="tipoAcrescimo" type="char" length="1" justify="left" padding=" " />
+            <field name="liquido" type="double" length="14" format="#0" justify="right" padding="0"/>
+            <field name="cancelado" type="char" length="1" justify="left" padding=" " />
+            <field name="canceladoAcrescimo" type="double" length="13" format="#0" justify="right" padding="0"/>
+            <field name="ordemAcresDesc" type="char" length="1" justify="left" padding=" " />
+            <field name="clienteNome" type="string" length="40" justify="left" padding=" "/>
+            <field name="clienteCPF" type="string" length="14" justify="right" padding="0"/>
+        </record>
+        <record name="R05" minOccurs="0" maxOccurs="unbounded" class="br.com.phdss.modelo.anexo.vi.R05">
+            <field name="padrao" type="string" length="3" default="R05"/>
+            <field name="serie" type="string" length="20" justify="left" padding=" "/>
+            <field name="mfAdicional" type="string" length="1" justify="left" padding=" " />
+            <field name="modeloECF" type="string" length="20" justify="left" padding=" "/>
+            <field name="usuario" type="int" length="2" justify="right" padding="0"/>
+            <field name="coo" type="int" length="6" justify="right" padding="0"/>
+            <field name="documento" type="int" length="6" justify="right" padding="0"/>
+            <field name="item" type="int" length="3" justify="right" padding="0"/>
+            <field name="codigo" type="string" length="14" justify="left" padding=" "/>
+            <field name="descricao" type="string" length="100" justify="left" padding=" "/>
+            <field name="quantidade" type="double" length="7" format="#0" justify="right" padding="0"/>
+            <field name="unidade" type="string" length="3" justify="left" padding=" "/>
+            <field name="bruto" type="double" length="8" format="#0" justify="right" padding="0"/>
+            <field name="desconto" type="double" length="8" format="#0" justify="right" padding="0"/>
+            <field name="acrescimo" type="double" length="8" format="#0" justify="right" padding="0"/>
+            <field name="total" type="double" length="14" format="#0" justify="right" padding="0"/>
+            <field name="totalizador" type="string" length="7" justify="left" padding=" "/>
+            <field name="cancelado" type="char" length="1" justify="left" padding=" " />
+            <field name="canceladoQtd" type="double" length="7" format="#0" justify="right" padding="0"/>
+            <field name="canceladoValor" type="double" length="13" format="#0" justify="right" padding="0"/>
+            <field name="canceladoAcrescimo" type="double" length="13" format="#0" justify="right" padding="0"/>
+            <field name="iat" type="char" length="1" justify="left" padding=" " />
+            <field name="ippt" type="char" length="1" justify="left" padding=" " />
+            <field name="decimalQuantidade" type="int" length="1" justify="right" padding="0"/>
+            <field name="decimalValor" type="int" length="1" justify="right" padding="0"/>
+        </record>
+        <record name="R06" minOccurs="0" maxOccurs="unbounded" class="br.com.phdss.modelo.anexo.vi.R06">
+            <field name="padrao" type="string" length="3" default="R06"/>
+            <field name="serie" type="string" length="20" justify="left" padding=" "/>
+            <field name="mfAdicional" type="string" length="1" justify="left" padding=" " />
+            <field name="modeloECF" type="string" length="20" justify="left" padding=" "/>
+            <field name="usuario" type="int" length="2" justify="right" padding="0"/>
+            <field name="coo" type="int" length="6" justify="right" padding="0"/>
+            <field name="gnf" type="int" length="6" justify="right" padding="0"/>
+            <field name="grg" type="int" length="6" justify="right" padding="0"/>
+            <field name="cdc" type="int" length="4" justify="right" padding="0"/>
+            <field name="tipo" type="string" length="2" justify="left" padding=" "/>
+            <field name="data" type="date" length="8" format="yyyyMMdd" justify="left" padding=" "/>
+            <field name="data" type="date" length="6" format="HHmmss" justify="left" padding=" "/>
+        </record>
+        <record name="R07" minOccurs="0" maxOccurs="unbounded" class="br.com.phdss.modelo.anexo.vi.R07">
+            <field name="padrao" type="string" length="3" default="R07"/>
+            <field name="serie" type="string" length="20" justify="left" padding=" "/>
+            <field name="mfAdicional" type="string" length="1" justify="left" padding=" " />
+            <field name="modeloECF" type="string" length="20" justify="left" padding=" "/>
+            <field name="usuario" type="int" length="2" justify="right" padding="0"/>
+            <field name="coo" type="int" length="6" justify="right" padding="0"/>
+            <field name="ccf" type="int" length="6" justify="right" padding="0"/>
+            <field name="gnf" type="int" length="6" justify="right" padding="0"/>
+            <field name="meioPagamento" type="string" length="15" justify="left" padding=" "/>
+            <field name="valor" type="double" length="13" format="#0" justify="right" padding="0"/>
+            <field name="estorno" type="char" length="1" justify="left" padding=" " />
+            <field name="valorEstorno" type="double" length="13" format="#0" justify="right" padding="0"/>
+        </record>
+    </stream>
+</beanio>
