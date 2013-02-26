@@ -8,7 +8,10 @@ import br.com.phdss.modelo.anexo.v.AnexoV;
 import br.com.phdss.modelo.anexo.v.P2;
 import br.com.phdss.modelo.anexo.vi.*;
 import br.com.phdss.modelo.anexo.x.AnexoX;
+import br.com.phdss.modelo.anexo.x.N1;
+import br.com.phdss.modelo.anexo.x.N2;
 import br.com.phdss.modelo.anexo.x.N3;
+import br.com.phdss.modelo.anexo.x.N9;
 import br.com.phdss.modelo.sintegra.Sintegra;
 import br.com.phdss.modelo.sped.Sped;
 import java.io.File;
@@ -107,8 +110,10 @@ public final class PAF {
         // inserindo os valores
         String[] props = descriptar(new String(bytes)).split("\n");
         for (String prop : props) {
-            String[] chaveValor = prop.split("=");
-            mapa.put(chaveValor[0], chaveValor[1]);
+            if (prop.contains("=")) {
+                String[] chaveValor = prop.split("=");
+                mapa.put(chaveValor[0], chaveValor[1]);
+            }
         }
     }
 
@@ -223,6 +228,46 @@ public final class PAF {
         // gerando o MD5
         Digester md5 = new Digester("MD5");
         return new BigInteger(1, md5.digest(dados)).toString(16);
+    }
+
+    /**
+     * Gera o arquivo com os arquivos autenticados.
+     *
+     * @throws Exception dispara caso nao consiga.
+     */
+    public static void gerarArquivos() throws Exception {
+        // cria o objeto modelo n1
+        N1 n1 = new N1();
+        n1.setCnpj(AUXILIAR.getProperty("sh.cnpj"));
+        n1.setIe(AUXILIAR.getProperty("sh.ie"));
+        n1.setIm(AUXILIAR.getProperty("sh.im"));
+        n1.setRazao(AUXILIAR.getProperty("sh.razao"));
+        // cria o objeto modelo n2
+        N2 n2 = new N2();
+        n2.setLaudo(AUXILIAR.getProperty("out.laudo"));
+        n2.setNome(AUXILIAR.getProperty("paf.nome"));
+        n2.setVersao(AUXILIAR.getProperty("paf.versao"));
+        // binario principal
+        N3 n3 = new N3();
+        n3.setNome("OpenPDV.jar");
+        StringBuilder principal = new StringBuilder(System.getProperty("user.dir"));
+        principal.append(System.getProperty("file.separator")).append("OpenPDV.jar");
+        n3.setMd5(gerarMD5(principal.toString()));
+        // cria a lista de n3
+        List<N3> listaN3 = new ArrayList<>();
+        listaN3.add(n3);
+        // cria o objeto modelo n9
+        N9 n9 = new N9();
+        n9.setCnpj(AUXILIAR.getProperty("sh.cnpj"));
+        n9.setIe(AUXILIAR.getProperty("sh.ie"));
+        n9.setTotal(listaN3.size());
+        // cria o modelo do anexo X
+        AnexoX anexoX = new AnexoX(n1, n2, listaN3, n9);
+        String md5Arquivo = gerarArquivos(anexoX);
+        if (!AUXILIAR.isEmpty()) {
+            AUXILIAR.setProperty("out.autenticado", md5Arquivo);
+            criptografar();
+        }
     }
 
     /**
@@ -549,8 +594,7 @@ public final class PAF {
     /**
      * Metodo que emite o relatorio de identificacao do PAF.
      *
-     * @param relatorio o codigo do relatorio de identificacao do paf-ecf
-     * cadastro no ECF
+     * @param relatorio o codigo do relatorio de identificacao do paf-ecf cadastro no ECF
      * @exception Exception dispara uma excecao caso nao consiga.
      */
     public static void emitirIdentificaoPAF(String relatorio) throws Exception {
@@ -703,7 +747,7 @@ public final class PAF {
         sb.append(ECF.SL); // pula linha
         sb.append("REQUISITO XXII ITEM 8 - PAF-ECF Integrado ao ECF").append(ECF.SL);
         sb.append("NAO COINCIDENCIA GT da ECF x ARQ. CRIPTOGRAFADO ").append(ECF.SL);
-        sb.append("RECOMPOE VALOR DO GT ARQUIVO CRIPTOGRAFADO.: NAO").append(ECF.SL);
+        sb.append("RECOMPOE VALOR DO GT ARQUIVO CRIPTOGRAFADO.: SIM").append(ECF.SL);
 
         // envia o comando com todo o texto
         ECF.enviar(EComandoECF.ECF_LinhaRelatorioGerencial, sb.toString());

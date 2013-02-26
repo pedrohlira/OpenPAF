@@ -1,13 +1,13 @@
 package br.com.phdss.modelo.sped;
 
-import br.com.phdss.modelo.sped.bloco9.Dados9999;
-import br.com.phdss.modelo.sped.bloco9.Dados9900;
-import br.com.phdss.modelo.sped.bloco9.Bloco9;
-import br.com.phdss.modelo.sped.bloco9.Dados9990;
-import br.com.phdss.modelo.sped.bloco9.Dados9001;
 import br.com.phdss.controlador.PAF;
 import br.com.phdss.modelo.sped.bloco0.Bloco0;
 import br.com.phdss.modelo.sped.bloco1.Bloco1;
+import br.com.phdss.modelo.sped.bloco9.Bloco9;
+import br.com.phdss.modelo.sped.bloco9.Dados9001;
+import br.com.phdss.modelo.sped.bloco9.Dados9900;
+import br.com.phdss.modelo.sped.bloco9.Dados9990;
+import br.com.phdss.modelo.sped.bloco9.Dados9999;
 import br.com.phdss.modelo.sped.blocoC.BlocoC;
 import br.com.phdss.modelo.sped.blocoD.BlocoD;
 import br.com.phdss.modelo.sped.blocoE.BlocoE;

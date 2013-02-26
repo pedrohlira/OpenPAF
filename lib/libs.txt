@@ -1,0 +1,6 @@
+Abaixo estao as libs e versoes usadas no sistema
+
+# Outras
+jasypt-1.9.0.jar
+beanio.jar
+loj4j-1.2.16.jar

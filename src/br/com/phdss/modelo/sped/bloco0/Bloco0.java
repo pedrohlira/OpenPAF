@@ -14,7 +14,6 @@ public class Bloco0 implements Bloco {
     private List<Dados0190> d0190;
     private List<Dados0200> d0200;
     private List<Dados0220> d0220;
-    private List<Dados0400> d0400;
     private List<Dados0450> d0450;
     private Dados0500 d0500;
     private Dados0990 d0990;
@@ -53,11 +52,6 @@ public class Bloco0 implements Bloco {
         }
         if (d0220 != null) {
             for (Dados0220 dados : d0220) {
-                dados.gerar(fw);
-            }
-        }
-        if (d0400 != null) {
-            for (Dados0400 dados : d0400) {
                 dados.gerar(fw);
             }
         }
@@ -136,14 +130,6 @@ public class Bloco0 implements Bloco {
 
     public void setD0220(List<Dados0220> d0220) {
         this.d0220 = d0220;
-    }
-
-    public List<Dados0400> getD0400() {
-        return d0400;
-    }
-
-    public void setD0400(List<Dados0400> d0400) {
-        this.d0400 = d0400;
     }
 
     public List<Dados0450> getD0450() {
