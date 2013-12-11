@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beanio xmlns="http://www.beanio.org/2011/01" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.beanio.org/2011/01 http://www.beanio.org/2011/01/mapping.xsd">
+    <stream name="Cat52" format="fixedlength">
+        <record name="E00" minOccurs="1" maxOccurs="1" class="br.com.phdss.modelo.cat52.E00">
+            <field name="padrao" type="string" length="3" default="E00"/>
+            <field name="serie" type="string" length="20" justify="left" padding=" " />
+            <field name="mfAdicional" type="string" length="1" justify="left" padding=" " />
+            <field name="usuario" type="int" length="2" justify="right" padding="0" />
+            <field name="tipoEcf" type="string" length="7" justify="left" padding=" " />
+            <field name="marcaEcf" type="string" length="20" justify="left" padding=" " />
+            <field name="modelo" type="string" length="20" justify="left" padding=" " />
+            <field name="coo" type="int" length="6" justify="right" padding="0" />
+            <field name="numAplicativo" type="int" length="2" justify="right" padding="0" />
+            <field name="cnpj_cpf" type="string" length="14" justify="right" padding="0" />
+            <field name="ie" type="string" length="14" justify="right" padding="0" />
+            <field name="im" type="string" length="14" justify="right" padding="0" />
+            <field name="razao" type="string" length="40" justify="left" padding=" " />
+            <field name="nomeAplicativo" type="string" length="40" justify="left" padding=" " />
+            <field name="versaoAplicativo" type="string" length="10" justify="left" padding=" " />
+            <field name="linha01" type="string" length="42" justify="left" padding=" " />
+            <field name="linha02" type="string" length="42" justify="left" padding=" " />
+        </record>
+        <record name="E01" minOccurs="1" maxOccurs="1" class="br.com.phdss.modelo.cat52.E01">
+            <field name="padrao" type="string" length="3" default="E01"/>
+            <field name="serie" type="string" length="20" justify="left" padding=" " />
+            <field name="mfAdicional" type="string" length="1" justify="left" padding=" " />
+            <field name="tipoEcf" type="string" length="7" justify="left" padding=" " />
+            <field name="marcaEcf" type="string" length="20" justify="left" padding=" " />
+            <field name="modeloEcf" type="string" length="20" justify="left" padding=" " />
+            <field name="versaoSB" type="string" length="10" justify="left" padding=" " />
+            <field name="dataSB" type="date" length="8" format="yyyyMMdd"/>
+            <field name="dataSB" type="date" length="6" format="HHmmss"/>
+            <field name="sequencial" type="int" length="3" justify="right" padding="0" />
+            <field name="cnpj" type="string" length="14" justify="right" padding="0" />
+            <field name="comando" type="string" length="3" justify="left" padding=" " />
+            <field name="crzIni" type="int" length="6" justify="right" padding="0" />
+            <field name="crzFim" type="int" length="6" justify="right" padding="0" />
+            <field name="dataIni" type="date" length="8" format="yyyyMMdd"/>
+            <field name="dataFim" type="date" length="8" format="yyyyMMdd"/>
+            <field name="biblioteca" type="string" length="8" justify="left" padding=" " />
+            <field name="atoCotepe" type="string" length="15" justify="left" padding=" " />
+        </record>
+        <record name="E02" minOccurs="1" maxOccurs="1" class="br.com.phdss.modelo.cat52.E02">
+            <field name="padrao" type="string" length="3" default="E02"/>
+            <field name="serie" type="string" length="20" justify="left" padding=" " />
+            <field name="mfAdicional" type="string" length="1" justify="left" padding=" " />
+            <field name="modelo" type="string" length="20" justify="left" padding=" " />
+            <field name="cnpj" type="string" length="14" justify="right" padding="0" />
+            <field name="ie" type="string" length="14" justify="right" padding="0" />
+            <field name="razao" type="string" length="40" justify="left" padding=" " />
+            <field name="endereco" type="string" length="120" justify="left" padding=" " />
+            <field name="cadastro" type="date" length="8" format="yyyyMMdd"/>
+            <field name="cadastro" type="date" length="6" format="HHmmss"/>
+            <field name="cro" type="int" length="6" justify="right" padding="0" />
+            <field name="gt" type="double" length="18" format="#0" justify="right" padding="0"/>
+            <field name="usuario" type="int" length="2" justify="right" padding="0" />
+        </record>
+        <record name="E12" minOccurs="1" maxOccurs="1" class="br.com.phdss.modelo.cat52.E12">
+            <field name="padrao" type="string" length="3" default="E12"/>
+            <field name="serie" type="string" length="20" justify="left" padding=" " />
+            <field name="mfAdicional" type="string" length="1" justify="left" padding=" " />
+            <field name="modelo" type="string" length="20" justify="left" padding=" " />
+            <field name="usuario" type="int" length="2" justify="right" padding="0" />
+            <field name="crz" type="int" length="6" justify="right" padding="0" />
+            <field name="coo" type="int" length="6" justify="right" padding="0" />
+            <field name="cro" type="int" length="6" justify="right" padding="0" />
+            <field name="movimento" type="date" length="8" format="yyyyMMdd"/>
+            <field name="emissao" type="date" length="8" format="yyyyMMdd"/>
+            <field name="emissao" type="date" length="6" format="HHmmss"/>
+            <field name="bruto" type="double" length="14" format="#0" justify="right" padding="0"/>
+            <field name="issqn" type="char" length="1" justify="left" padding=" "/>
+        </record>
+        <record name="E13" minOccurs="0" maxOccurs="unbounded" class="br.com.phdss.modelo.cat52.E13">
+            <field name="padrao" type="string" length="3" default="E13"/>
+            <field name="serie" type="string" length="20" justify="left" padding=" " />
+            <field name="mfAdicional" type="string" length="1" justify="left" padding=" " />
+            <field name="modelo" type="string" length="20" justify="left" padding=" " />
+            <field name="usuario" type="int" length="2" justify="right" padding="0" />
+            <field name="crz" type="int" length="6" justify="right" padding="0" />
+            <field name="totalizador" type="string" length="7" justify="left" padding=" " />
+            <field name="valor" type="double" length="13" format="#0" justify="right" padding="0"/>
+        </record>
+        <record name="E14" minOccurs="0" maxOccurs="unbounded" class="br.com.phdss.modelo.cat52.E14">
+            <field name="padrao" type="string" length="3" default="E14"/>
+            <field name="serie" type="string" length="20" justify="left" padding=" " />
+            <field name="mfAdicional" type="string" length="1" justify="left" padding=" " />
+            <field name="modelo" type="string" length="20" justify="left" padding=" " />
+            <field name="usuario" type="int" length="2" justify="right" padding="0" />
+            <field name="ccf" type="int" length="6" justify="right" padding="0" />
+            <field name="coo" type="int" length="6" justify="right" padding="0" />
+            <field name="data" type="date" length="8" format="yyyyMMdd"/>
+            <field name="bruto" type="double" length="14" format="#0" justify="right" padding="0"/>
+            <field name="desconto" type="double" length="13" format="#0" justify="right" padding="0"/>
+            <field name="descontoTipo" type="char" length="1" justify="left" padding=" "/>
+            <field name="acrescimo" type="double" length="13" format="#0" justify="right" padding="0"/>
+            <field name="acrescimoTipo" type="char" length="1" justify="left" padding=" "/>
+            <field name="liquido" type="double" length="14" format="#0" justify="right" padding="0"/>
+            <field name="cancelado" type="char" length="1" justify="left" padding=" "/>
+            <field name="canceladoAcrescimo" type="double" length="13" format="#0" justify="right" padding="0"/>
+            <field name="ordemDA" type="char" length="1" justify="left" padding=" "/>
+            <field name="cliente" type="string" length="40" justify="left" padding=" " />
+            <field name="cnpj_cpf" type="string" length="14" justify="right" padding="0" />
+        </record>
+        <record name="E15" minOccurs="0" maxOccurs="unbounded" class="br.com.phdss.modelo.cat52.E15">
+            <field name="padrao" type="string" length="3" default="E15"/>
+            <field name="serie" type="string" length="20" justify="left" padding=" " />
+            <field name="mfAdicional" type="string" length="1" justify="left" padding=" " />
+            <field name="modelo" type="string" length="20" justify="left" padding=" " />
+            <field name="usuario" type="int" length="2" justify="right" padding="0" />
+            <field name="coo" type="int" length="6" justify="right" padding="0" />
+            <field name="ccf" type="int" length="6" justify="right" padding="0" />
+            <field name="item" type="int" length="3" justify="right" padding="0" />
+            <field name="codigo" type="string" length="14" justify="left" padding=" " />
+            <field name="descricao" type="string" length="100" justify="left" padding=" " />
+            <field name="qtd" type="double" length="7" format="#0" justify="right" padding="0" />
+            <field name="und" type="string" length="3" justify="left" padding=" " />
+            <field name="bruto" type="double" length="8" format="#0" justify="right" padding="0"/>
+            <field name="desconto" type="double" length="8" format="#0" justify="right" padding="0"/>
+            <field name="acrescimo" type="double" length="8" format="#0" justify="right" padding="0"/>
+            <field name="liquido" type="double" length="14" format="#0" justify="right" padding="0"/>
+            <field name="totalizador" type="string" length="7" justify="left" padding=" " />
+            <field name="cancelado" type="char" length="1" justify="left" padding=" "/>
+            <field name="qtdCancelado" type="double" length="7" format="#0" justify="right" padding="0" />
+            <field name="valorCancelado" type="double" length="13" format="#0" justify="right" padding="0"/>
+            <field name="acrescimoCancelado" type="double" length="13" format="#0" justify="right" padding="0"/>
+            <field name="iat" type="char" length="1" justify="left" padding=" "/>
+            <field name="qtdDecimais" type="int" length="1" justify="right" padding="0" />
+            <field name="valorDecimais" type="int" length="1" justify="right" padding="0" />
+        </record>
+        <record name="E16" minOccurs="0" maxOccurs="unbounded" class="br.com.phdss.modelo.cat52.E16">
+            <field name="padrao" type="string" length="3" default="E16"/>
+            <field name="serie" type="string" length="20" justify="left" padding=" " />
+            <field name="mfAdicional" type="string" length="1" justify="left" padding=" " />
+            <field name="modelo" type="string" length="20" justify="left" padding=" " />
+            <field name="usuario" type="int" length="2" justify="right" padding="0" />
+            <field name="coo" type="int" length="6" justify="right" padding="0" />
+            <field name="gnf" type="int" length="6" justify="right" padding="0" />
+            <field name="grg" type="int" length="6" justify="right" padding="0" />
+            <field name="cdc" type="int" length="4" justify="right" padding="0" />
+            <field name="crz" type="int" length="6" justify="right" padding="0" />
+            <field name="denominacao" type="string" length="2" justify="left" padding=" " />
+            <field name="data" type="date" length="8" format="yyyyMMdd"/>
+            <field name="data" type="date" length="6" format="HHmmss"/>
+        </record>
+        <record name="E21" minOccurs="0" maxOccurs="unbounded" class="br.com.phdss.modelo.cat52.E21">
+            <field name="padrao" type="string" length="3" default="E21"/>
+            <field name="serie" type="string" length="20" justify="left" padding=" " />
+            <field name="mfAdicional" type="string" length="1" justify="left" padding=" " />
+            <field name="modelo" type="string" length="20" justify="left" padding=" " />
+            <field name="usuario" type="int" length="2" justify="right" padding="0" />
+            <field name="coo" type="int" length="6" justify="right" padding="0" />
+            <field name="ccf" type="int" length="6" justify="right" padding="0" />
+            <field name="gnf" type="int" length="6" justify="right" padding="0" />
+            <field name="descricao" type="string" length="15" justify="left" padding=" " />
+            <field name="valor" type="double" length="13" format="#0" justify="right" padding="0"/>
+            <field name="estorno" type="char" length="1" justify="left" padding=" "/>
+            <field name="estornoValor" type="double" length="13" format="#0" justify="right" padding="0"/>
+        </record>
+    </stream>
+</beanio>

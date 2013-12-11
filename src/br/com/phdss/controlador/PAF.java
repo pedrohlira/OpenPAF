@@ -12,6 +12,12 @@ import br.com.phdss.modelo.anexo.x.N1;
 import br.com.phdss.modelo.anexo.x.N2;
 import br.com.phdss.modelo.anexo.x.N3;
 import br.com.phdss.modelo.anexo.x.N9;
+import br.com.phdss.modelo.cat52.Cat52;
+import br.com.phdss.modelo.cat52.E13;
+import br.com.phdss.modelo.cat52.E14;
+import br.com.phdss.modelo.cat52.E15;
+import br.com.phdss.modelo.cat52.E16;
+import br.com.phdss.modelo.cat52.E21;
 import br.com.phdss.modelo.sintegra.Sintegra;
 import br.com.phdss.modelo.sped.Sped;
 import java.io.File;
@@ -53,6 +59,7 @@ public final class PAF {
 
     /**
      * @see #criptografar(java.lang.String, java.util.Properties)
+     * @throws Exception dispara caso nao consiga.
      */
     public static void criptografar() throws Exception {
         criptografar("conf" + System.getProperty("file.separator") + "auxiliar.txt", AUXILIAR);
@@ -172,6 +179,7 @@ public final class PAF {
      * Metodo que adiciona a assinatura ao final do arquivo.
      *
      * @param path path completo do arquivo a ser assinado.
+     * @throws Exception dispara caso nao consiga.
      */
     public static void assinarArquivoEAD(String path) throws Exception {
         // configurando a chave
@@ -441,6 +449,73 @@ public final class PAF {
         // assinando o arquivo
         assinarArquivoEAD(path);
         return path;
+    }
+
+    /**
+     * Metodo que gera o arquivo exigido para NFA ou NFP.
+     *
+     * @param cat52 o modelo de dados a ser gravado no arquivo.
+     * @return o path do arquivo completo gerado.
+     * @throws Exception dispara caso nao consiga.
+     */
+    public static String gerarArquivoCat52(Cat52 cat52) throws Exception {
+        // recupera a data que sera usada na geracao do arquivo
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(cat52.getE01().getDataIni());
+        int mes = cal.get(Calendar.MONTH) + 1;
+
+        // verifica se existe a pasta do ano e mes e gera o nome completo do arquivo
+        StringBuilder sb = new StringBuilder(getPathArquivos());
+        sb.append("cat52").append(System.getProperty("file.separator"));
+        sb.append(cal.get(Calendar.YEAR)).append(System.getProperty("file.separator"));
+        if (mes < 9) {
+            sb.append("0");
+        }
+        sb.append(mes);
+        File dir = new File(sb.toString());
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        sb.append(System.getProperty("file.separator")).append(cat52.getE01().getSerie());
+        sb.append("_").append(new SimpleDateFormat("ddMMyyyy").format(cal.getTime())).append(".txt");
+        FileWriter fw = new FileWriter(sb.toString());
+
+        // compila no formato
+        StreamFactory factory = StreamFactory.newInstance();
+        factory.load(PAF.class.getClass().getResourceAsStream("/br/com/phdss/modelo/cat52/Cat52.xml"));
+        BeanWriter bw = factory.createWriter("Cat52", fw);
+
+        // escevendo no arquivo
+        bw.write(cat52.getE00());
+        bw.write(cat52.getE01());
+        bw.write(cat52.getE02());
+        bw.write(cat52.getE12());
+        bw.flush();
+        for (E13 e13 : cat52.getListaE13()) {
+            bw.write(e13);
+            bw.flush();
+        }
+        for (E14 e14 : cat52.getListaE14()) {
+            bw.write(e14);
+            bw.flush();
+        }
+        for (E15 e15 : cat52.getListaE15()) {
+            bw.write(e15);
+            bw.flush();
+        }
+        for (E16 e16 : cat52.getListaE16()) {
+            bw.write(e16);
+            bw.flush();
+        }
+        for (E21 e21 : cat52.getListaE21()) {
+            bw.write(e21);
+            bw.flush();
+        }
+        bw.close();
+
+        // assinando o arquivo
+        assinarArquivoEAD(sb.toString());
+        return sb.toString();
     }
 
     /**
