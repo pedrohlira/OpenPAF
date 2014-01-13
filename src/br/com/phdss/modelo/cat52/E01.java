@@ -11,7 +11,6 @@ public class E01 extends CabecalhoE {
 
     private String tipoEcf;
     private String marcaEcf;
-    private String modeloEcf;
     private String versaoSB;
     private Date dataSB;
     private int sequencial;
@@ -42,14 +41,6 @@ public class E01 extends CabecalhoE {
 
     public void setMarcaEcf(String marcaEcf) {
         this.marcaEcf = marcaEcf;
-    }
-
-    public String getModeloEcf() {
-        return modeloEcf;
-    }
-
-    public void setModeloEcf(String modeloEcf) {
-        this.modeloEcf = modeloEcf;
     }
 
     public String getVersaoSB() {

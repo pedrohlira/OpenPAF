@@ -52,7 +52,7 @@ public class E21 extends CabecalhoE {
     }
 
     public double getValor() {
-        return valor;
+        return valor * 100;
     }
 
     public void setValor(double valor) {
@@ -68,7 +68,7 @@ public class E21 extends CabecalhoE {
     }
 
     public double getEstornoValor() {
-        return estornoValor;
+        return estornoValor * 100;
     }
 
     public void setEstornoValor(double estornoValor) {

@@ -72,7 +72,7 @@ public class E15 extends CabecalhoE {
     }
 
     public double getQtd() {
-        return qtd;
+        return qtd * 100;
     }
 
     public void setQtd(double qtd) {
@@ -88,7 +88,7 @@ public class E15 extends CabecalhoE {
     }
 
     public double getBruto() {
-        return bruto;
+        return bruto * 100;
     }
 
     public void setBruto(double bruto) {
@@ -96,7 +96,7 @@ public class E15 extends CabecalhoE {
     }
 
     public double getDesconto() {
-        return desconto;
+        return desconto * 100;
     }
 
     public void setDesconto(double desconto) {
@@ -104,7 +104,7 @@ public class E15 extends CabecalhoE {
     }
 
     public double getAcrescimo() {
-        return acrescimo;
+        return acrescimo * 100;
     }
 
     public void setAcrescimo(double acrescimo) {
@@ -112,7 +112,7 @@ public class E15 extends CabecalhoE {
     }
 
     public double getLiquido() {
-        return liquido;
+        return liquido * 100;
     }
 
     public void setLiquido(double liquido) {
@@ -136,7 +136,7 @@ public class E15 extends CabecalhoE {
     }
 
     public double getQtdCancelado() {
-        return qtdCancelado;
+        return qtdCancelado * 100;
     }
 
     public void setQtdCancelado(double qtdCancelado) {
@@ -144,7 +144,7 @@ public class E15 extends CabecalhoE {
     }
 
     public double getValorCancelado() {
-        return valorCancelado;
+        return valorCancelado * 100;
     }
 
     public void setValorCancelado(double valorCancelado) {
@@ -152,7 +152,7 @@ public class E15 extends CabecalhoE {
     }
 
     public double getAcrescimoCancelado() {
-        return acrescimoCancelado;
+        return acrescimoCancelado * 100;
     }
 
     public void setAcrescimoCancelado(double acrescimoCancelado) {

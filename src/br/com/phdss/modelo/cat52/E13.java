@@ -36,7 +36,7 @@ public class E13 extends CabecalhoE {
     }
 
     public void setValor(double valor) {
-        this.valor = valor;
+        this.valor = valor * 100;
     }
 
 }

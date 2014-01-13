@@ -1,6 +1,6 @@
 package br.com.phdss.modelo.sped;
 
-import br.com.phdss.controlador.PAF;
+import br.com.phdss.Util;
 import br.com.phdss.modelo.sped.bloco0.Bloco0;
 import br.com.phdss.modelo.sped.bloco1.Bloco1;
 import br.com.phdss.modelo.sped.bloco9.Bloco9;
@@ -80,7 +80,7 @@ public class Sped implements Bloco {
         // Lendo as linhas do sped
         Map<String, Integer> regs = new LinkedHashMap<>();
         // lendo o arquivo
-        BufferedReader br = new BufferedReader(new FileReader(PAF.getPathArquivos() + "sped.txt"));
+        BufferedReader br = new BufferedReader(new FileReader(Util.getPathArquivos() + "sped.txt"));
         String linha, chave;
         while ((linha = br.readLine()) != null) {
             chave = linha.substring(1, 5);

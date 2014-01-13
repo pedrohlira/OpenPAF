@@ -26,7 +26,7 @@
             <field name="mfAdicional" type="string" length="1" justify="left" padding=" " />
             <field name="tipoEcf" type="string" length="7" justify="left" padding=" " />
             <field name="marcaEcf" type="string" length="20" justify="left" padding=" " />
-            <field name="modeloEcf" type="string" length="20" justify="left" padding=" " />
+            <field name="modelo" type="string" length="20" justify="left" padding=" " />
             <field name="versaoSB" type="string" length="10" justify="left" padding=" " />
             <field name="dataSB" type="date" length="8" format="yyyyMMdd"/>
             <field name="dataSB" type="date" length="6" format="HHmmss"/>

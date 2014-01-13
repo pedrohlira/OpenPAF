@@ -53,7 +53,7 @@ public class E14 extends CabecalhoE {
     }
 
     public double getBruto() {
-        return bruto;
+        return bruto * 100;
     }
 
     public void setBruto(double bruto) {
@@ -61,7 +61,7 @@ public class E14 extends CabecalhoE {
     }
 
     public double getDesconto() {
-        return desconto;
+        return desconto * 100;
     }
 
     public void setDesconto(double desconto) {
@@ -77,7 +77,7 @@ public class E14 extends CabecalhoE {
     }
 
     public double getAcrescimo() {
-        return acrescimo;
+        return acrescimo * 100;
     }
 
     public void setAcrescimo(double acrescimo) {
@@ -93,7 +93,7 @@ public class E14 extends CabecalhoE {
     }
 
     public double getLiquido() {
-        return liquido;
+        return liquido * 100;
     }
 
     public void setLiquido(double liquido) {
@@ -109,7 +109,7 @@ public class E14 extends CabecalhoE {
     }
 
     public double getCanceladoAcrescimo() {
-        return canceladoAcrescimo;
+        return canceladoAcrescimo * 100;
     }
 
     public void setCanceladoAcrescimo(double canceladoAcrescimo) {

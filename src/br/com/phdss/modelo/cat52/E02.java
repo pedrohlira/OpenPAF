@@ -70,7 +70,7 @@ public class E02 extends CabecalhoE {
     }
 
     public double getGt() {
-        return gt;
+        return gt * 100;
     }
 
     public void setGt(double gt) {

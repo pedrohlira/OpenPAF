@@ -62,7 +62,7 @@ public class E12 extends CabecalhoE {
     }
 
     public double getBruto() {
-        return bruto;
+        return bruto * 100;
     }
 
     public void setBruto(double bruto) {

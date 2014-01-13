@@ -1,6 +1,6 @@
 package br.com.phdss.modelo.sintegra;
 
-import br.com.phdss.controlador.PAF;
+import br.com.phdss.Util;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -91,7 +91,7 @@ public class Sintegra implements Registro {
         int total = 1;
 
         // lendo o arquivo
-        BufferedReader br = new BufferedReader(new FileReader(PAF.getPathArquivos() + "sintegra.txt"));
+        BufferedReader br = new BufferedReader(new FileReader(Util.getPathArquivos() + "sintegra.txt"));
         String linha, chave;
         while ((linha = br.readLine()) != null) {
             chave = linha.substring(0, 2);

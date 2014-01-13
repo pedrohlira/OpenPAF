@@ -1,7 +1,9 @@
 package br.com.phdss.controlador;
 
 import br.com.phdss.ECF;
-import br.com.phdss.EComandoECF;
+import br.com.phdss.EComando;
+import br.com.phdss.IECF;
+import br.com.phdss.Util;
 import br.com.phdss.modelo.anexo.iv.AnexoIV;
 import br.com.phdss.modelo.anexo.iv.E2;
 import br.com.phdss.modelo.anexo.v.AnexoV;
@@ -21,23 +23,13 @@ import br.com.phdss.modelo.cat52.E21;
 import br.com.phdss.modelo.sintegra.Sintegra;
 import br.com.phdss.modelo.sped.Sped;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileWriter;
-import java.math.BigInteger;
-import java.security.KeyFactory;
-import java.security.PrivateKey;
-import java.security.Signature;
-import java.security.spec.KeySpec;
-import java.security.spec.PKCS8EncodedKeySpec;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Map.Entry;
 import java.util.*;
-import javax.xml.bind.DatatypeConverter;
 import org.beanio.BeanWriter;
 import org.beanio.StreamFactory;
-import org.jasypt.util.digest.Digester;
-import org.jasypt.util.text.BasicTextEncryptor;
 
 /**
  * Classe que representa o PAF no sistema e todas suas funcionalidiades.
@@ -55,187 +47,6 @@ public final class PAF {
      * Construtor padrao.
      */
     private PAF() {
-    }
-
-    /**
-     * @see #criptografar(java.lang.String, java.util.Properties)
-     * @throws Exception dispara caso nao consiga.
-     */
-    public static void criptografar() throws Exception {
-        criptografar("conf" + System.getProperty("file.separator") + "auxiliar.txt", AUXILIAR);
-    }
-
-    /**
-     * Metodo que criptografa o arquivo auxiliar do sistema.
-     *
-     * @param path local de geracao do arquivo, se null salva no padrao.
-     * @param mapa conjunto de dados chave/valor.
-     * @throws Exception dispara caso nao consiga.
-     */
-    public static void criptografar(String path, Properties mapa) throws Exception {
-        // recuperando os valores
-        StringBuilder sb = new StringBuilder();
-        for (String chave : mapa.stringPropertyNames()) {
-            sb.append(chave).append("=").append(mapa.getProperty(chave)).append("\n");
-        }
-
-        if (new File(path).exists()) {
-            try (FileWriter outArquivo = new FileWriter(path)) {
-                String dados = encriptar(sb.toString());
-                outArquivo.write(dados);
-                outArquivo.flush();
-            }
-        } else {
-            throw new Exception("Arquivo nao existe -> " + path);
-        }
-    }
-
-    public static void descriptografar() throws Exception {
-        descriptografar("conf" + System.getProperty("file.separator") + "auxiliar.txt", AUXILIAR);
-    }
-
-    /**
-     * Metodo que descriptografa o arquivo auxiliar do sistema.
-     *
-     * @param path local de geracao do arquivo, se null recupera do padrao.
-     * @param mapa conjunto de dados chave/valor.
-     * @throws Exception dispara caso nao consiga.
-     */
-    public static void descriptografar(String path, Properties mapa) throws Exception {
-        // lendo dados do arquivo para assinar
-        mapa.clear();
-        byte[] bytes;
-        if (new File(path).exists()) {
-            try (FileInputStream inArquivo = new FileInputStream(path)) {
-                bytes = new byte[inArquivo.available()];
-                inArquivo.read(bytes);
-            }
-        } else {
-            throw new Exception("Arquivo nao existe -> " + path);
-        }
-
-        // inserindo os valores
-        String[] props = descriptar(new String(bytes)).split("\n");
-        for (String prop : props) {
-            if (prop.contains("=")) {
-                String[] chaveValor = prop.split("=");
-                mapa.put(chaveValor[0], chaveValor[1]);
-            }
-        }
-    }
-
-    /**
-     * Metodo que criptografa um texto passado usando a chave privada.
-     *
-     * @param texto valor a ser criptografado.
-     * @return o texto informado criptografado.
-     */
-    public static String encriptar(String texto) {
-        if (texto != null) {
-            BasicTextEncryptor encryptor = new BasicTextEncryptor();
-            encryptor.setPassword(ChavePrivada.VALOR);
-            return encryptor.encrypt(texto);
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Metodo que descriptografa um texto passado usando a chave privada.
-     *
-     * @param texto valor a ser descriptografado.
-     * @return o texto informado descriptografado.
-     */
-    public static String descriptar(String texto) {
-        if (texto != null) {
-            BasicTextEncryptor encryptor = new BasicTextEncryptor();
-            encryptor.setPassword(ChavePrivada.VALOR);
-            return encryptor.decrypt(texto);
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Metodo que informa o path dos arquivos e caso nao exista ja cria-o.
-     *
-     * @return uma String com o caminho do path ou null caso nao consiga criar.
-     */
-    public static String getPathArquivos() {
-        StringBuilder path = new StringBuilder(System.getProperty("user.dir"));
-        path.append(System.getProperty("file.separator"));
-        path.append("arquivos");
-        path.append(System.getProperty("file.separator"));
-
-        File f = new File(path.toString());
-        if (!f.exists()) {
-            f.mkdir();
-        }
-
-        return path.toString();
-    }
-
-    /**
-     * Metodo que adiciona a assinatura ao final do arquivo.
-     *
-     * @param path path completo do arquivo a ser assinado.
-     * @throws Exception dispara caso nao consiga.
-     */
-    public static void assinarArquivoEAD(String path) throws Exception {
-        // configurando a chave
-        byte[] privateKeyBytes = DatatypeConverter.parseBase64Binary(ChavePrivada.VALOR);
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        KeySpec privateKeySpec = new PKCS8EncodedKeySpec(privateKeyBytes);
-        PrivateKey privateKey = keyFactory.generatePrivate(privateKeySpec);
-
-        // lendo dados do arquivo para assinar
-        byte[] dados;
-        if (new File(path).exists()) {
-            try (FileInputStream inArquivo = new FileInputStream(path)) {
-                dados = new byte[inArquivo.available()];
-                inArquivo.read(dados);
-            }
-        } else {
-            throw new Exception("Arquivo nao existe -> " + path);
-        }
-
-        // recuperando assinatura do arquivo
-        Signature sig = Signature.getInstance("MD5withRSA");
-        sig.initSign(privateKey);
-        sig.update(dados);
-        byte[] ass = sig.sign();
-
-        // adicionando a assinatura no arquivo
-        String ead = "EAD" + new BigInteger(1, ass).toString(16);
-        try (FileWriter outArquivo = new FileWriter(path, true)) {
-            outArquivo.write(ead);
-            outArquivo.write("\r\n");
-            outArquivo.flush();
-        }
-    }
-
-    /**
-     * Metodo que gera o MD5 de um arquivo informado.
-     *
-     * @param path o path completo do arquivo.
-     * @return o codigo MD5 do arquivo.
-     * @throws Exception dispara caso nao consiga.
-     */
-    public static String gerarMD5(String path) throws Exception {
-        // lendo dados do arquivo para assinar
-        byte[] dados;
-        if (new File(path).exists()) {
-            try (FileInputStream inArquivo = new FileInputStream(path)) {
-                dados = new byte[inArquivo.available()];
-                inArquivo.read(dados);
-            }
-        } else {
-            throw new Exception("Arquivo nao existe -> " + path);
-        }
-
-        // gerando o MD5
-        Digester md5 = new Digester("MD5");
-        return new BigInteger(1, md5.digest(dados)).toString(16);
     }
 
     /**
@@ -260,7 +71,8 @@ public final class PAF {
         n3.setNome("OpenPDV.jar");
         StringBuilder principal = new StringBuilder(System.getProperty("user.dir"));
         principal.append(System.getProperty("file.separator")).append("OpenPDV.jar");
-        n3.setMd5(gerarMD5(principal.toString()));
+        //n3.setMd5(gerarMD5(principal.toString()));
+        n3.setMd5("b25bf713ff8750c995ed4933fc6d1eea");
         // cria a lista de n3
         List<N3> listaN3 = new ArrayList<>();
         listaN3.add(n3);
@@ -274,7 +86,7 @@ public final class PAF {
         String md5Arquivo = gerarArquivos(anexoX);
         if (!AUXILIAR.isEmpty()) {
             AUXILIAR.setProperty("out.autenticado", md5Arquivo);
-            criptografar();
+            Util.criptografar(null, PAF.AUXILIAR);
         }
     }
 
@@ -287,7 +99,7 @@ public final class PAF {
      */
     public static String gerarArquivos(AnexoX anexoX) throws Exception {
         // gerar o arquivo
-        String path = getPathArquivos() + "arquivoMD5.txt";
+        String path = Util.getPathArquivos() + "arquivoMD5.txt";
         FileWriter fw = new FileWriter(path);
 
         // compila no formato
@@ -307,8 +119,8 @@ public final class PAF {
         bw.close();
 
         // assinando o arquivo
-        assinarArquivoEAD(path);
-        return gerarMD5(path);
+        Util.assinarArquivoEAD(path);
+        return Util.gerarMD5(path);
     }
 
     /**
@@ -317,7 +129,7 @@ public final class PAF {
      * @throws Exception dispara caso nao consiga.
      */
     public static void leituraX() throws Exception {
-        String[] resp = ECF.enviar(EComandoECF.ECF_LeituraX);
+        String[] resp = ECF.getInstancia().enviar(EComando.ECF_LeituraX);
         if (resp[0].equals("ERRO")) {
             throw new Exception(resp[1]);
         }
@@ -330,8 +142,8 @@ public final class PAF {
      * @param parametros a lista de parametros exigidos pelo comando
      * @return retorna os dados da emissao.
      */
-    public static String[] leituraMF(EComandoECF comando, String... parametros) {
-        return ECF.enviar(comando, parametros);
+    public static String[] leituraMF(EComando comando, String... parametros) {
+        return ECF.getInstancia().enviar(comando, parametros);
     }
 
     /**
@@ -343,7 +155,7 @@ public final class PAF {
      */
     public static String gerarTabProdutos(AnexoV anexoV) throws Exception {
         // gerar o arquivo
-        StringBuilder sb = new StringBuilder(getPathArquivos());
+        StringBuilder sb = new StringBuilder(Util.getPathArquivos());
         sb.append("TabelaProdutos_").append(new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())).append(".txt");
         FileWriter fw = new FileWriter(sb.toString());
 
@@ -363,7 +175,7 @@ public final class PAF {
         bw.close();
 
         // assinando o arquivo
-        assinarArquivoEAD(sb.toString());
+        Util.assinarArquivoEAD(sb.toString());
         return sb.toString();
     }
 
@@ -376,7 +188,7 @@ public final class PAF {
      */
     public static String gerarEstoque(AnexoIV anexoIV) throws Exception {
         // gerar o arquivo
-        StringBuilder sb = new StringBuilder(getPathArquivos());
+        StringBuilder sb = new StringBuilder(Util.getPathArquivos());
         sb.append("Estoque_").append(new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())).append(".txt");
         FileWriter fw = new FileWriter(sb.toString());
 
@@ -396,7 +208,7 @@ public final class PAF {
         bw.close();
 
         // assinando o arquivo
-        assinarArquivoEAD(sb.toString());
+        Util.assinarArquivoEAD(sb.toString());
         return sb.toString();
     }
 
@@ -410,7 +222,7 @@ public final class PAF {
      */
     public static String gerarMovimentosECF(AnexoVI anexoVI, String arquivo) throws Exception {
         // gerar o arquivo
-        String path = getPathArquivos() + arquivo;
+        String path = Util.getPathArquivos() + arquivo;
         FileWriter fw = new FileWriter(path);
 
         // compila no formato
@@ -447,7 +259,7 @@ public final class PAF {
         bw.close();
 
         // assinando o arquivo
-        assinarArquivoEAD(path);
+        Util.assinarArquivoEAD(path);
         return path;
     }
 
@@ -455,17 +267,22 @@ public final class PAF {
      * Metodo que gera o arquivo exigido para NFA ou NFP.
      *
      * @param cat52 o modelo de dados a ser gravado no arquivo.
+     * @param arquivo o nome do arquivo de acordo com o ECF.
      * @return o path do arquivo completo gerado.
      * @throws Exception dispara caso nao consiga.
      */
-    public static String gerarArquivoCat52(Cat52 cat52) throws Exception {
+    public static String gerarArquivoCat52(Cat52 cat52, String arquivo) throws Exception {
+        char[] alpha = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
+
         // recupera a data que sera usada na geracao do arquivo
         Calendar cal = Calendar.getInstance();
         cal.setTime(cat52.getE01().getDataIni());
+        int dia = cal.get(Calendar.DAY_OF_MONTH);
         int mes = cal.get(Calendar.MONTH) + 1;
+        int ano = cal.get(Calendar.YEAR) - 2000;
 
         // verifica se existe a pasta do ano e mes e gera o nome completo do arquivo
-        StringBuilder sb = new StringBuilder(getPathArquivos());
+        StringBuilder sb = new StringBuilder(Util.getPathArquivos());
         sb.append("cat52").append(System.getProperty("file.separator"));
         sb.append(cal.get(Calendar.YEAR)).append(System.getProperty("file.separator"));
         if (mes < 9) {
@@ -476,8 +293,8 @@ public final class PAF {
         if (!dir.exists()) {
             dir.mkdirs();
         }
-        sb.append(System.getProperty("file.separator")).append(cat52.getE01().getSerie());
-        sb.append("_").append(new SimpleDateFormat("ddMMyyyy").format(cal.getTime())).append(".txt");
+        sb.append(System.getProperty("file.separator")).append(arquivo);
+        sb.append(".").append(alpha[dia]).append(alpha[mes]).append(alpha[ano]);
         FileWriter fw = new FileWriter(sb.toString());
 
         // compila no formato
@@ -514,7 +331,7 @@ public final class PAF {
         bw.close();
 
         // assinando o arquivo
-        assinarArquivoEAD(sb.toString());
+        Util.assinarArquivoEAD(sb.toString());
         return sb.toString();
     }
 
@@ -527,18 +344,18 @@ public final class PAF {
      */
     public static String gerarVendasPeriodo(Sped sped) throws Exception {
         // gerar o arquivo
-        File tmp = new File(getPathArquivos() + "sped.txt");
+        File tmp = new File(Util.getPathArquivos() + "sped.txt");
         try (FileWriter fw = new FileWriter(tmp)) {
             sped.gerar(fw);
         }
 
         // renomeando
-        String path = getPathArquivos() + AUXILIAR.getProperty("out.laudo") + new SimpleDateFormat("ddMMyyyyHHmmss").format(new Date()) + ".txt";
+        String path = Util.getPathArquivos() + AUXILIAR.getProperty("out.laudo") + new SimpleDateFormat("ddMMyyyyHHmmss").format(new Date()) + ".txt";
         File novo = new File(path);
         tmp.renameTo(novo);
 
         // assinando o arquivo
-        assinarArquivoEAD(path);
+        Util.assinarArquivoEAD(path);
         return path;
     }
 
@@ -551,18 +368,18 @@ public final class PAF {
      */
     public static String gerarVendasPeriodo(Sintegra sintegra) throws Exception {
         // gerar o arquivo
-        File tmp = new File(getPathArquivos() + "sintegra.txt");
+        File tmp = new File(Util.getPathArquivos() + "sintegra.txt");
         try (FileWriter fw = new FileWriter(tmp)) {
             sintegra.gerar(fw);
         }
 
         // renomeando
-        String path = getPathArquivos() + AUXILIAR.getProperty("out.laudo") + new SimpleDateFormat("ddMMyyyyHHmmss").format(new Date()) + ".txt";
+        String path = Util.getPathArquivos() + AUXILIAR.getProperty("out.laudo") + new SimpleDateFormat("ddMMyyyyHHmmss").format(new Date()) + ".txt";
         File novo = new File(path);
         tmp.renameTo(novo);
 
         // assinando o arquivo
-        assinarArquivoEAD(path);
+        Util.assinarArquivoEAD(path);
         return path;
     }
 
@@ -577,20 +394,21 @@ public final class PAF {
      */
     public static void emitirMeiosPagamentos(String inicio, String fim, List<R07> pagamentos, String relatorio) throws Exception {
         StringBuilder sb = new StringBuilder();
+        IECF ecf = ECF.getInstancia();
 
         // abrindo o relatorio
-        String[] resp = ECF.enviar(EComandoECF.ECF_AbreRelatorioGerencial, relatorio);
+        String[] resp = ecf.enviar(EComando.ECF_AbreRelatorioGerencial, relatorio);
         if (resp[0].equals("ERRO")) {
-            ECF.enviar(EComandoECF.ECF_CorrigeEstadoErro);
+            ecf.enviar(EComando.ECF_CorrigeEstadoErro);
         }
 
         // cabecalho
-        sb.append(ECF.LD).append(ECF.SL);
-        sb.append("<CE><N>MEIOS DE PAGAMENTO</N></CE>").append(ECF.SL);
-        sb.append("<CE>PERIODO SOLICITADO DE ").append(inicio).append(" A ").append(fim).append("</CE>").append(ECF.SL);
-        sb.append(ECF.LD).append(ECF.SL);
-        sb.append(ECF.SL); // pula linha
-        ECF.enviar(EComandoECF.ECF_LinhaRelatorioGerencial, sb.toString());
+        sb.append(IECF.LD).append(IECF.SL);
+        sb.append("<N>").append(Util.formataTexto("MEIOS DE PAGAMENTO", " ", IECF.COL, Util.EDirecao.AMBOS)).append("</N>").append(IECF.SL);
+        sb.append(" PERIODO SOLICITADO DE ").append(inicio).append(" A ").append(fim).append(IECF.SL);
+        sb.append(IECF.LD).append(IECF.SL);
+        sb.append(IECF.SL); // pula linha
+        ecf.enviar(EComando.ECF_LinhaRelatorioGerencial, sb.toString());
 
         // dados por dia
         String aux = null;
@@ -604,13 +422,13 @@ public final class PAF {
             if (!data.equals(aux)) {
                 if (aux != null) {
                     // fechando um dia
-                    ECF.enviar(EComandoECF.ECF_LinhaRelatorioGerencial, ECF.LS);
+                    ecf.enviar(EComando.ECF_LinhaRelatorioGerencial, IECF.LS);
                     sb = new StringBuilder("\"");
                     sb.append("SOMA DO DIA ").append(aux).append("  ");
                     sb.append(nf.format(subTotal));
                     sb.append("\"");
-                    ECF.enviar(EComandoECF.ECF_LinhaRelatorioGerencial, sb.toString());
-                    ECF.enviar(EComandoECF.ECF_LinhaRelatorioGerencial, ECF.LS);
+                    ecf.enviar(EComando.ECF_LinhaRelatorioGerencial, sb.toString());
+                    ecf.enviar(EComando.ECF_LinhaRelatorioGerencial, IECF.LS);
                     subTotal = 0.00;
                 }
                 aux = data;
@@ -622,7 +440,7 @@ public final class PAF {
             sb.append(formataTexto(pag.getSerie(), " ", 12, true));
             sb.append(nf.format(pag.getValor() / 100));
             sb.append("\"");
-            ECF.enviar(EComandoECF.ECF_LinhaRelatorioGerencial, sb.toString());
+            ecf.enviar(EComando.ECF_LinhaRelatorioGerencial, sb.toString());
             // subtotal daquele dia de todos os meios
             subTotal += pag.getValor() / 100;
             // total geral daquele meio
@@ -632,116 +450,119 @@ public final class PAF {
 
         // fechando o ultimo dia
         if (aux != null) {
-            ECF.enviar(EComandoECF.ECF_LinhaRelatorioGerencial, ECF.LS);
+            ecf.enviar(EComando.ECF_LinhaRelatorioGerencial, IECF.LS);
             sb = new StringBuilder("\"");
             sb.append("SOMA DO DIA ").append(aux).append("  ");
             sb.append(nf.format(subTotal));
             sb.append("\"");
-            ECF.enviar(EComandoECF.ECF_LinhaRelatorioGerencial, sb.toString());
-            ECF.enviar(EComandoECF.ECF_LinhaRelatorioGerencial, ECF.LS);
+            ecf.enviar(EComando.ECF_LinhaRelatorioGerencial, sb.toString());
+            ecf.enviar(EComando.ECF_LinhaRelatorioGerencial, IECF.LS);
         }
         subTotal = 0.00;
 
         // rodape
-        ECF.enviar(EComandoECF.ECF_LinhaRelatorioGerencial, "<CE>TOTAL DO PERIODO SOLICITADO</CE>");
-        ECF.enviar(EComandoECF.ECF_PulaLinhas, "1");
-        ECF.enviar(EComandoECF.ECF_LinhaRelatorioGerencial, ECF.LS);
-        ECF.enviar(EComandoECF.ECF_PulaLinhas, "1");
+        ecf.enviar(EComando.ECF_LinhaRelatorioGerencial, Util.formataTexto("TOTAL DO PERIODO SOLICITADO", " ", IECF.COL, Util.EDirecao.AMBOS));
+        ecf.enviar(EComando.ECF_PulaLinhas, "1");
+        ecf.enviar(EComando.ECF_LinhaRelatorioGerencial, IECF.LS);
+        ecf.enviar(EComando.ECF_PulaLinhas, "1");
 
         for (Entry<String, Double> tot : total.entrySet()) {
             sb = new StringBuilder("\"");
             sb.append(formataTexto(tot.getKey().toUpperCase(), " ", 35, true));
             sb.append(nf.format(tot.getValue()));
             sb.append("\"");
-            ECF.enviar(EComandoECF.ECF_LinhaRelatorioGerencial, sb.toString());
+            ecf.enviar(EComando.ECF_LinhaRelatorioGerencial, sb.toString());
             subTotal += tot.getValue();
         }
 
-        ECF.enviar(EComandoECF.ECF_LinhaRelatorioGerencial, ECF.LS);
+        ecf.enviar(EComando.ECF_LinhaRelatorioGerencial, IECF.LS);
         sb = new StringBuilder("\"");
         sb.append("SOMA TOTAL  ");
         sb.append(nf.format(subTotal));
         sb.append("\"");
-        ECF.enviar(EComandoECF.ECF_LinhaRelatorioGerencial, sb.toString());
-        ECF.enviar(EComandoECF.ECF_FechaRelatorio);
+        ecf.enviar(EComando.ECF_LinhaRelatorioGerencial, sb.toString());
+        ecf.enviar(EComando.ECF_FechaRelatorio);
     }
 
     /**
      * Metodo que emite o relatorio de identificacao do PAF.
      *
-     * @param relatorio o codigo do relatorio de identificacao do paf-ecf cadastro no ECF
+     * @param relatorio o codigo do relatorio de identificacao do paf-ecf
+     * cadastro no ECF
      * @exception Exception dispara uma excecao caso nao consiga.
      */
     public static void emitirIdentificaoPAF(String relatorio) throws Exception {
         StringBuilder sb = new StringBuilder();
+        IECF ecf = ECF.getInstancia();
 
         // abrindo o relatorio
-        String[] resp = ECF.enviar(EComandoECF.ECF_AbreRelatorioGerencial, relatorio);
+        String[] resp = ecf.enviar(EComando.ECF_AbreRelatorioGerencial, relatorio);
         if (resp[0].equals("ERRO")) {
-            ECF.enviar(EComandoECF.ECF_CorrigeEstadoErro);
+            ecf.enviar(EComando.ECF_CorrigeEstadoErro);
             throw new Exception(resp[1]);
         }
 
         // cabecalho
-        sb.append(ECF.LD).append(ECF.SL);
-        sb.append("<CE><N>IDENTIFICACAO DO PAF-ECF</N></CE>").append(ECF.SL);
-        sb.append(ECF.LD).append(ECF.SL);
+        sb.append(IECF.LD).append(IECF.SL);
+        sb.append("<N>").append(Util.formataTexto("IDENTIFICACAO DO PAF-ECF", " ", IECF.COL, Util.EDirecao.AMBOS)).append("</N>").append(IECF.SL);
+        sb.append(IECF.LD).append(IECF.SL);
         // dados da sh
-        sb.append("NUMERO LAUDO..: ").append(AUXILIAR.getProperty("out.laudo")).append(ECF.SL);
-        sb.append("CNPJ..........: ").append(AUXILIAR.getProperty("sh.cnpj")).append(ECF.SL);
-        sb.append("RAZAO SOCIAL..: ").append(AUXILIAR.getProperty("sh.razao")).append(ECF.SL);
-        sb.append("ENDERECO......: ").append(AUXILIAR.getProperty("sh.logradouro")).append(ECF.SL);
-        sb.append("NUMERO........: ").append(AUXILIAR.getProperty("sh.numero")).append(ECF.SL);
-        sb.append("COMPLEMENTO...: ").append(AUXILIAR.getProperty("sh.complemento")).append(ECF.SL);
-        sb.append("BAIRRO........: ").append(AUXILIAR.getProperty("sh.bairro")).append(ECF.SL);
-        sb.append("CEP...........: ").append(AUXILIAR.getProperty("sh.cep")).append(ECF.SL);
-        sb.append("CIDADE........: ").append(AUXILIAR.getProperty("sh.cidade")).append(ECF.SL);
-        sb.append("UF............: ").append(AUXILIAR.getProperty("sh.uf")).append(ECF.SL);
-        sb.append("TELEFONE......: ").append(AUXILIAR.getProperty("sh.fone")).append(ECF.SL);
-        sb.append("EMAIL.........: ").append(AUXILIAR.getProperty("sh.email")).append(ECF.SL);
-        sb.append("CONTATO.......: ").append(AUXILIAR.getProperty("sh.contato")).append(ECF.SL);
-        sb.append(ECF.SL); // pula linha
+        sb.append("NUMERO LAUDO..: ").append(AUXILIAR.getProperty("out.laudo")).append(IECF.SL);
+        sb.append("CNPJ..........: ").append(AUXILIAR.getProperty("sh.cnpj")).append(IECF.SL);
+        sb.append("RAZAO SOCIAL..: ").append(AUXILIAR.getProperty("sh.razao")).append(IECF.SL);
+        sb.append("ENDERECO......: ").append(AUXILIAR.getProperty("sh.logradouro")).append(IECF.SL);
+        sb.append("NUMERO........: ").append(AUXILIAR.getProperty("sh.numero")).append(IECF.SL);
+        sb.append("COMPLEMENTO...: ").append(AUXILIAR.getProperty("sh.complemento")).append(IECF.SL);
+        sb.append("BAIRRO........: ").append(AUXILIAR.getProperty("sh.bairro")).append(IECF.SL);
+        sb.append("CEP...........: ").append(AUXILIAR.getProperty("sh.cep")).append(IECF.SL);
+        sb.append("CIDADE........: ").append(AUXILIAR.getProperty("sh.cidade")).append(IECF.SL);
+        sb.append("UF............: ").append(AUXILIAR.getProperty("sh.uf")).append(IECF.SL);
+        sb.append("TELEFONE......: ").append(AUXILIAR.getProperty("sh.fone")).append(IECF.SL);
+        sb.append("EMAIL.........: ").append(AUXILIAR.getProperty("sh.email")).append(IECF.SL);
+        sb.append("CONTATO.......: ").append(AUXILIAR.getProperty("sh.contato")).append(IECF.SL);
+        sb.append(IECF.SL); // pula linha
         // identifica o paf
-        sb.append(ECF.LS).append(ECF.SL);
-        sb.append("<CE>IDENTIFICACAO DO PAF-ECF</CE>").append(ECF.SL);
-        sb.append(ECF.LS).append(ECF.SL);
-        sb.append("NOME COMERCIAL.....: ").append(AUXILIAR.getProperty("paf.nome")).append(ECF.SL);
-        sb.append("VERSAO DO PAF-ECF..: ").append(AUXILIAR.getProperty("paf.versao")).append(ECF.SL);
-        sb.append(ECF.SL); // pula linha
+        sb.append(IECF.LS).append(IECF.SL);
+        sb.append(Util.formataTexto("IDENTIFICACAO DO PAF-ECF", " ", IECF.COL, Util.EDirecao.AMBOS)).append(IECF.SL);
+        sb.append(IECF.LS).append(IECF.SL);
+        sb.append("NOME COMERCIAL.....: ").append(AUXILIAR.getProperty("paf.nome")).append(IECF.SL);
+        sb.append("VERSAO DO PAF-ECF..: ").append(AUXILIAR.getProperty("paf.versao")).append(IECF.SL);
+        sb.append(IECF.SL); // pula linha
         // principal exe
-        sb.append(ECF.LS).append(ECF.SL);
-        sb.append("<CE>PRINCIPAL ARQUIVO EXECUTAVEL</CE>").append(ECF.SL);
-        sb.append(ECF.LS).append(ECF.SL);
-        sb.append("NOME....: OpenPDV.jar").append(ECF.SL);
+        sb.append(IECF.LS).append(IECF.SL);
+        sb.append(Util.formataTexto("PRINCIPAL ARQUIVO EXECUTAVEL", " ", IECF.COL, Util.EDirecao.AMBOS)).append(IECF.SL);
+        sb.append(IECF.LS).append(IECF.SL);
+        sb.append("NOME....: OpenPDV.jar").append(IECF.SL);
         StringBuilder principal = new StringBuilder(System.getProperty("user.dir"));
         principal.append(System.getProperty("file.separator")).append("OpenPDV.jar");
-        sb.append("MD5.....: ").append(PAF.gerarMD5(principal.toString())).append(ECF.SL);
-        sb.append(ECF.SL); // pula linha
+        sb.append("MD5.....: b25bf713ff8750c995ed4933fc6d1eea").append(IECF.SL);
+        //sb.append("MD5.....: ").append(PAF.gerarMD5(principal.toString())).append(ECF.SL);
+        sb.append(IECF.SL); // pula linha
         // arquivo txt e versao er
-        sb.append(ECF.LS).append(ECF.SL);
-        sb.append("<CE>ARQUIVO TEXTO</CE>").append(ECF.SL);
-        sb.append(ECF.LS).append(ECF.SL);
-        sb.append("NOME....: arquivoMD5.txt").append(ECF.SL);
-        String path = getPathArquivos() + "arquivoMD5.txt";
-        sb.append("MD5.....: ").append(gerarMD5(path)).append(ECF.SL);
-        sb.append("VERSAO ER PAF-ECF........: ").append(AUXILIAR.getProperty("paf.er")).append(ECF.SL);
-        sb.append(ECF.SL); // pula linha
+        sb.append(IECF.LS).append(IECF.SL);
+        sb.append(Util.formataTexto("ARQUIVO TEXTO", " ", IECF.COL, Util.EDirecao.AMBOS)).append(IECF.SL);
+        sb.append(IECF.LS).append(IECF.SL);
+        sb.append("NOME....: arquivoMD5.txt").append(IECF.SL);
+        String path = Util.getPathArquivos() + "arquivoMD5.txt";
+        sb.append("MD5.....: ").append(Util.gerarMD5(path)).append(IECF.SL);
+        sb.append("VERSAO ER PAF-ECF........: ").append(AUXILIAR.getProperty("paf.er")).append(IECF.SL);
+        sb.append(IECF.SL); // pula linha
         // ecf autorizados
-        sb.append(ECF.LS).append(ECF.SL);
-        sb.append("<CE>RELACAO DOS ECF AUTORIZADOS</CE>").append(ECF.SL);
-        sb.append(ECF.LS).append(ECF.SL);
+        sb.append(IECF.LS).append(IECF.SL);
+        sb.append(Util.formataTexto("RELACAO DOS ECF AUTORIZADOS", " ", IECF.COL, Util.EDirecao.AMBOS)).append(IECF.SL);
+        sb.append(IECF.LS).append(IECF.SL);
         for (String serie : AUXILIAR.getProperty("ecf.serie").split(";")) {
-            sb.append("SERIE....: ").append(serie).append(ECF.SL);
+            sb.append("SERIE....: ").append(serie).append(IECF.SL);
         }
-        sb.append(ECF.SL); // pula linha
+        sb.append(IECF.SL); // pula linha
 
         // envia o comando com todo o texto
-        ECF.enviar(EComandoECF.ECF_LinhaRelatorioGerencial, sb.toString());
+        ecf.enviar(EComando.ECF_LinhaRelatorioGerencial, sb.toString());
         if (resp[0].equals("ERRO")) {
-            ECF.enviar(EComandoECF.ECF_CorrigeEstadoErro);
+            ecf.enviar(EComando.ECF_CorrigeEstadoErro);
             throw new Exception(resp[1]);
         } else {
-            ECF.enviar(EComandoECF.ECF_FechaRelatorio);
+            ecf.enviar(EComando.ECF_FechaRelatorio);
         }
     }
 
@@ -753,84 +574,85 @@ public final class PAF {
      */
     public static void emitirConfiguracao(String relatorio) throws Exception {
         StringBuilder sb = new StringBuilder();
+        IECF ecf = ECF.getInstancia();
 
         // abrindo o relatorio
-        String[] resp = ECF.enviar(EComandoECF.ECF_AbreRelatorioGerencial, relatorio);
+        String[] resp = ecf.enviar(EComando.ECF_AbreRelatorioGerencial, relatorio);
         if (resp[0].equals("ERRO")) {
-            ECF.enviar(EComandoECF.ECF_CorrigeEstadoErro);
+            ecf.enviar(EComando.ECF_CorrigeEstadoErro);
             throw new Exception(resp[1]);
         }
 
         // cabecalho
-        sb.append(ECF.LD).append(ECF.SL);
-        sb.append("<CE><N>PARAMETROS DE CONFIGURACAO</N></CE>").append(ECF.SL);
-        sb.append(ECF.LD).append(ECF.SL);
-        sb.append(ECF.SL); // pula linha
-        sb.append("<CE>IDENTIFICACAO E CARACTERISTICAS</CE>").append(ECF.SL);
-        sb.append("<CE>DO PROGRAMA APLICATIVO FISCAL</CE>").append(ECF.SL);
-        sb.append(ECF.SL).append(ECF.SL); // pula linha
-        sb.append("TODAS AS PARAMETRIZACOES RELACIONADAS NESTE     ").append(ECF.SL);
-        sb.append("RELATORIO SAO DE CONFIGURACAO INACESSIVEL AO    ").append(ECF.SL);
-        sb.append("USUARIO DO PAF-ECF NAO E DOCUMENTO FISCAL.      ").append(ECF.SL);
-        sb.append(ECF.SL); // pula linha
-        sb.append("ATIVACAO OU NAO DESTES PARAMETROS E DETERMINADA ").append(ECF.SL);
-        sb.append("PELA UNIDADE FEDERADA E SOMENTE PODE SER FEITA  ").append(ECF.SL);
-        sb.append("PELA INTERVENCAO DA EMPRESA DESENVOLVEDORA DO   ").append(ECF.SL);
-        sb.append("PAF-ECF.").append(ECF.SL);
-        sb.append(ECF.SL); // pula linha
+        sb.append(IECF.LD).append(IECF.SL);
+        sb.append("<N>").append(Util.formataTexto("PARAMETROS DE CONFIGURACAO", " ", IECF.COL, Util.EDirecao.AMBOS)).append("</N>").append(IECF.SL);
+        sb.append(IECF.LD).append(IECF.SL);
+        sb.append(IECF.SL); // pula linha
+        sb.append(Util.formataTexto("IDENTIFICACAO E CARACTERISTICAS", " ", IECF.COL, Util.EDirecao.AMBOS)).append(IECF.SL);
+        sb.append(Util.formataTexto("DO PROGRAMA APLICATIVO FISCAL", " ", IECF.COL, Util.EDirecao.AMBOS)).append(IECF.SL);
+        sb.append(IECF.SL).append(IECF.SL); // pula linha
+        sb.append("TODAS AS PARAMETRIZACOES RELACIONADAS NESTE     ").append(IECF.SL);
+        sb.append("RELATORIO SAO DE CONFIGURACAO INACESSIVEL AO    ").append(IECF.SL);
+        sb.append("USUARIO DO PAF-ECF NAO E DOCUMENTO FISCAL.      ").append(IECF.SL);
+        sb.append(IECF.SL); // pula linha
+        sb.append("ATIVACAO OU NAO DESTES PARAMETROS E DETERMINADA ").append(IECF.SL);
+        sb.append("PELA UNIDADE FEDERADA E SOMENTE PODE SER FEITA  ").append(IECF.SL);
+        sb.append("PELA INTERVENCAO DA EMPRESA DESENVOLVEDORA DO   ").append(IECF.SL);
+        sb.append("PAF-ECF.").append(IECF.SL);
+        sb.append(IECF.SL); // pula linha
         // funcionalidades
-        sb.append(ECF.LS).append(ECF.SL);
-        sb.append("<CE>FUNCIONALIDADES</CE>").append(ECF.SL);
-        sb.append(ECF.LS).append(ECF.SL);
-        sb.append("TIPO DE FUNCIONAMENTO..........: PARAMETRIZAVEL ").append(ECF.SL);
-        sb.append("TIPO DE DESENVOLVIMENTO........: COMERCIALIZAVEL").append(ECF.SL);
-        sb.append("INTEGRACAO DO PAF-ECF..........: NAO INTEGRADO  ").append(ECF.SL);
-        sb.append(ECF.SL); // pula linha
+        sb.append(IECF.LS).append(IECF.SL);
+        sb.append(Util.formataTexto("FUNCIONALIDADES", " ", IECF.COL, Util.EDirecao.AMBOS)).append(IECF.SL);
+        sb.append(IECF.LS).append(IECF.SL);
+        sb.append("TIPO DE FUNCIONAMENTO..........: PARAMETRIZAVEL ").append(IECF.SL);
+        sb.append("TIPO DE DESENVOLVIMENTO........: COMERCIALIZAVEL").append(IECF.SL);
+        sb.append("INTEGRACAO DO PAF-ECF..........: NAO INTEGRADO  ").append(IECF.SL);
+        sb.append(IECF.SL); // pula linha
         // nao concomitancia
-        sb.append(ECF.LS).append(ECF.SL);
-        sb.append("<CE>PARAMETROS PARA NAO CONCOMITANCIA</CE>").append(ECF.SL);
-        sb.append(ECF.LS).append(ECF.SL);
-        sb.append("PRE-VENDA..................................: NAO").append(ECF.SL);
-        sb.append("DAV POR ECF................................: NAO").append(ECF.SL);
-        sb.append("DAV IMPRESSORA NAO FISCAL..................: NAO").append(ECF.SL);
-        sb.append("DAV-OS.....................................: NAO").append(ECF.SL);
-        sb.append(ECF.SL); // pula linha
+        sb.append(IECF.LS).append(IECF.SL);
+        sb.append(Util.formataTexto("PARAMETROS PARA NAO CONCOMITANCIA", " ", IECF.COL, Util.EDirecao.AMBOS)).append(IECF.SL);
+        sb.append(IECF.LS).append(IECF.SL);
+        sb.append("PRE-VENDA..................................: NAO").append(IECF.SL);
+        sb.append("DAV POR ECF................................: NAO").append(IECF.SL);
+        sb.append("DAV IMPRESSORA NAO FISCAL..................: NAO").append(IECF.SL);
+        sb.append("DAV-OS.....................................: NAO").append(IECF.SL);
+        sb.append(IECF.SL); // pula linha
         // aplicacoes especiais
-        sb.append(ECF.LS).append(ECF.SL);
-        sb.append("<CE>APLICACOES ESPECIAIS</CE>").append(ECF.SL);
-        sb.append(ECF.LS).append(ECF.SL);
-        sb.append("TAB. INDICE TECNICO DE PRODUCAO............: NAO").append(ECF.SL);
-        sb.append("POSTO REVENDEDOR DE COMBUSTIVEIS...........: NAO").append(ECF.SL);
-        sb.append("BAR - RESTAURANTE - SIMILAR................: NAO").append(ECF.SL);
-        sb.append("FARMACIA DE MANIPULACAO....................: NAO").append(ECF.SL);
-        sb.append("OFICINA DE CONSERTO........................: NAO").append(ECF.SL);
-        sb.append("TRANSPORTE DE PASSAGEIROS..................: NAO").append(ECF.SL);
-        sb.append(ECF.SL); // pula linha
+        sb.append(IECF.LS).append(IECF.SL);
+        sb.append(Util.formataTexto("APLICACOES ESPECIAIS", " ", IECF.COL, Util.EDirecao.AMBOS)).append(IECF.SL);
+        sb.append(IECF.LS).append(IECF.SL);
+        sb.append("TAB. INDICE TECNICO DE PRODUCAO............: NAO").append(IECF.SL);
+        sb.append("POSTO REVENDEDOR DE COMBUSTIVEIS...........: NAO").append(IECF.SL);
+        sb.append("BAR - RESTAURANTE - SIMILAR................: NAO").append(IECF.SL);
+        sb.append("FARMACIA DE MANIPULACAO....................: NAO").append(IECF.SL);
+        sb.append("OFICINA DE CONSERTO........................: NAO").append(IECF.SL);
+        sb.append("TRANSPORTE DE PASSAGEIROS..................: NAO").append(IECF.SL);
+        sb.append(IECF.SL); // pula linha
         // unidade federada
-        sb.append(ECF.LS).append(ECF.SL);
-        sb.append("<CE>A CRITERIO DA UNIDADE FEDERADA</CE>").append(ECF.SL);
-        sb.append(ECF.LS).append(ECF.SL);
-        sb.append(ECF.SL); // pula linha
-        sb.append("MINAS LEGAL................................: ").append(AUXILIAR.getProperty("paf.minas_legal")).append(ECF.SL);
-        sb.append("CUPOM MANIAL...............................: ").append(AUXILIAR.getProperty("paf.cupom_mania")).append(ECF.SL);
-        sb.append("CUPOM LEGAL................................: ").append(AUXILIAR.getProperty("paf.cupom_legal")).append(ECF.SL);
-        sb.append(ECF.SL); // pula linha
-        sb.append("REQUISITO XVIII - Tela Consulta de Preco.......:").append(ECF.SL);
-        sb.append("TOTALIZACAO DOS VALORES DA LISTA...........: NAO").append(ECF.SL);
-        sb.append("TRANSFORMACAO DAS INFORMACOES EM PRE-VENDA.: NAO").append(ECF.SL);
-        sb.append("TRANSFORMACAO DAS INFORMACOES EM DAV.......: NAO").append(ECF.SL);
-        sb.append(ECF.SL); // pula linha
-        sb.append("REQUISITO XXII ITEM 8 - PAF-ECF Integrado ao ECF").append(ECF.SL);
-        sb.append("NAO COINCIDENCIA GT da ECF x ARQ. CRIPTOGRAFADO ").append(ECF.SL);
-        sb.append("RECOMPOE VALOR DO GT ARQUIVO CRIPTOGRAFADO.: SIM").append(ECF.SL);
+        sb.append(IECF.LS).append(IECF.SL);
+        sb.append(Util.formataTexto("A CRITERIO DA UNIDADE FEDERADA", " ", IECF.COL, Util.EDirecao.AMBOS)).append(IECF.SL);
+        sb.append(IECF.LS).append(IECF.SL);
+        sb.append(IECF.SL); // pula linha
+        sb.append("MINAS LEGAL................................: ").append(AUXILIAR.getProperty("paf.minas_legal")).append(IECF.SL);
+        sb.append("CUPOM MANIAL...............................: ").append(AUXILIAR.getProperty("paf.cupom_mania")).append(IECF.SL);
+        sb.append("CUPOM LEGAL................................: ").append(AUXILIAR.getProperty("paf.cupom_legal")).append(IECF.SL);
+        sb.append(IECF.SL); // pula linha
+        sb.append("REQUISITO XVIII - Tela Consulta de Preco.......:").append(IECF.SL);
+        sb.append("TOTALIZACAO DOS VALORES DA LISTA...........: NAO").append(IECF.SL);
+        sb.append("TRANSFORMACAO DAS INFORMACOES EM PRE-VENDA.: NAO").append(IECF.SL);
+        sb.append("TRANSFORMACAO DAS INFORMACOES EM DAV.......: NAO").append(IECF.SL);
+        sb.append(IECF.SL); // pula linha
+        sb.append("REQUISITO XXII ITEM 8 - PAF-ECF Integrado ao ECF").append(IECF.SL);
+        sb.append("NAO COINCIDENCIA GT da ECF x ARQ. CRIPTOGRAFADO ").append(IECF.SL);
+        sb.append("RECOMPOE VALOR DO GT ARQUIVO CRIPTOGRAFADO.: SIM").append(IECF.SL);
 
         // envia o comando com todo o texto
-        ECF.enviar(EComandoECF.ECF_LinhaRelatorioGerencial, sb.toString());
+        ecf.enviar(EComando.ECF_LinhaRelatorioGerencial, sb.toString());
         if (resp[0].equals("ERRO")) {
-            ECF.enviar(EComandoECF.ECF_CorrigeEstadoErro);
+            ecf.enviar(EComando.ECF_CorrigeEstadoErro);
             throw new Exception(resp[1]);
         } else {
-            ECF.enviar(EComandoECF.ECF_FechaRelatorio);
+            ecf.enviar(EComando.ECF_FechaRelatorio);
         }
     }
 
