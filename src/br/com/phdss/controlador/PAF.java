@@ -71,8 +71,7 @@ public final class PAF {
         n3.setNome("OpenPDV.jar");
         StringBuilder principal = new StringBuilder(System.getProperty("user.dir"));
         principal.append(System.getProperty("file.separator")).append("OpenPDV.jar");
-        //n3.setMd5(gerarMD5(principal.toString()));
-        n3.setMd5("b25bf713ff8750c995ed4933fc6d1eea");
+        n3.setMd5(Util.gerarMD5(principal.toString()));
         // cria a lista de n3
         List<N3> listaN3 = new ArrayList<>();
         listaN3.add(n3);
@@ -535,8 +534,7 @@ public final class PAF {
         sb.append("NOME....: OpenPDV.jar").append(IECF.SL);
         StringBuilder principal = new StringBuilder(System.getProperty("user.dir"));
         principal.append(System.getProperty("file.separator")).append("OpenPDV.jar");
-        sb.append("MD5.....: b25bf713ff8750c995ed4933fc6d1eea").append(IECF.SL);
-        //sb.append("MD5.....: ").append(PAF.gerarMD5(principal.toString())).append(ECF.SL);
+        sb.append("MD5.....: ").append(Util.gerarMD5(principal.toString())).append(IECF.SL);
         sb.append(IECF.SL); // pula linha
         // arquivo txt e versao er
         sb.append(IECF.LS).append(IECF.SL);
