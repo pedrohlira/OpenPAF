@@ -1,4 +1,4 @@
-package br.com.phdss.modelo.anexo.vi;
+package br.com.phdss.modelo.anexo.iv;
 
 import br.com.phdss.modelo.anexo.Bean;
 

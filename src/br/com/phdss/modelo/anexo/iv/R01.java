@@ -1,9 +1,9 @@
-package br.com.phdss.modelo.anexo.vi;
+package br.com.phdss.modelo.anexo.iv;
 
 import java.util.Date;
 
 /**
- * Classe que representa o modelo R01 do anexo VI.
+ * Classe que representa o modelo R01 do anexo IV.
  *
  * @author Pedro H. Lira
  */
@@ -28,7 +28,7 @@ public class R01 extends CabecalhoR {
     private Date fim;
 
     public R01() {
-        padrao = "R01";
+        this.padrao = "R01";
     }
 
     public String getEmpresaCNPJ() {

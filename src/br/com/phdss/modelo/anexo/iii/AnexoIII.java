@@ -1,4 +1,4 @@
-package br.com.phdss.modelo.anexo.x;
+package br.com.phdss.modelo.anexo.iii;
 
 import java.util.List;
 
@@ -7,17 +7,17 @@ import java.util.List;
  *
  * @author Pedro H. Lira
  */
-public class AnexoX {
+public class AnexoIII {
 
     private N1 n1;
     private N2 n2;
     private List<N3> listaN3;
     private N9 n9;
 
-    public AnexoX() {
+    public AnexoIII() {
     }
 
-    public AnexoX(N1 n1, N2 n2, List<N3> listaN3, N9 n9) {
+    public AnexoIII(N1 n1, N2 n2, List<N3> listaN3, N9 n9) {
         this.n1 = n1;
         this.n2 = n2;
         this.listaN3 = listaN3;

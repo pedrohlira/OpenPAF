@@ -1,7 +1,7 @@
-package br.com.phdss.modelo.anexo.vi;
+package br.com.phdss.modelo.anexo.iv;
 
 /**
- * Classe que representa o modelo R05 do anexo VI.
+ * Classe que representa o modelo R05 do anexo IV.
  *
  * @author Pedro H. Lira
  */
@@ -29,7 +29,7 @@ public class R05 extends CabecalhoR {
     private int decimalValor;
     
     public R05() {
-        padrao = "R05";
+        this.padrao = "R05";
     }
 
     public Double getAcrescimo() {

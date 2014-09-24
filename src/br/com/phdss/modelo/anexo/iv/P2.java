@@ -1,4 +1,4 @@
-package br.com.phdss.modelo.anexo.v;
+package br.com.phdss.modelo.anexo.iv;
 
 import br.com.phdss.modelo.anexo.Bean;
 
@@ -20,7 +20,7 @@ public class P2 extends Bean {
     private Double valor;
 
     public P2() {
-        padrao = "P2";
+        this.padrao = "P2";
     }
 
     public Double getAliquota() {

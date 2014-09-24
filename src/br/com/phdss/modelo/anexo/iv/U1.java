@@ -1,16 +1,22 @@
-package br.com.phdss.modelo.anexo;
+package br.com.phdss.modelo.anexo.iv;
+
+import br.com.phdss.modelo.anexo.Bean;
 
 /**
- * Classe que representa o modelo de cabecalho de arquivos exportados.
+ * Classe que representa o modelo U1 do anexo IV.
  *
  * @author Pedro H. Lira
  */
-public abstract class Cabecalho extends Bean {
+public class U1 extends Bean {
 
-    protected String cnpj;
-    protected String ie;
-    protected String im;
-    protected String razao;
+    private String cnpj;
+    private String ie;
+    private String im;
+    private String razao;
+    
+    public U1() {
+        this.padrao = "U1";
+    }
 
     public String getCnpj() {
         return cnpj;
@@ -43,4 +49,5 @@ public abstract class Cabecalho extends Bean {
     public void setRazao(String razao) {
         this.razao = razao;
     }
+    
 }

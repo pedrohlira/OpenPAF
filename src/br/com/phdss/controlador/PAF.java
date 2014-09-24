@@ -6,14 +6,19 @@ import br.com.phdss.IECF;
 import br.com.phdss.Util;
 import br.com.phdss.modelo.anexo.iv.AnexoIV;
 import br.com.phdss.modelo.anexo.iv.E2;
-import br.com.phdss.modelo.anexo.v.AnexoV;
-import br.com.phdss.modelo.anexo.v.P2;
-import br.com.phdss.modelo.anexo.vi.*;
-import br.com.phdss.modelo.anexo.x.AnexoX;
-import br.com.phdss.modelo.anexo.x.N1;
-import br.com.phdss.modelo.anexo.x.N2;
-import br.com.phdss.modelo.anexo.x.N3;
-import br.com.phdss.modelo.anexo.x.N9;
+import br.com.phdss.modelo.anexo.iii.AnexoIII;
+import br.com.phdss.modelo.anexo.iii.N1;
+import br.com.phdss.modelo.anexo.iii.N2;
+import br.com.phdss.modelo.anexo.iii.N3;
+import br.com.phdss.modelo.anexo.iii.N9;
+import br.com.phdss.modelo.anexo.iv.A2;
+import br.com.phdss.modelo.anexo.iv.P2;
+import br.com.phdss.modelo.anexo.iv.R02;
+import br.com.phdss.modelo.anexo.iv.R03;
+import br.com.phdss.modelo.anexo.iv.R04;
+import br.com.phdss.modelo.anexo.iv.R05;
+import br.com.phdss.modelo.anexo.iv.R06;
+import br.com.phdss.modelo.anexo.iv.R07;
 import br.com.phdss.modelo.cat52.Cat52;
 import br.com.phdss.modelo.cat52.E13;
 import br.com.phdss.modelo.cat52.E14;
@@ -24,15 +29,13 @@ import br.com.phdss.modelo.sintegra.Sintegra;
 import br.com.phdss.modelo.sped.Sped;
 import java.io.File;
 import java.io.FileWriter;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.Map.Entry;
 import java.util.*;
 import org.beanio.BeanWriter;
 import org.beanio.StreamFactory;
 
 /**
- * Classe que representa o PAF no sistema e todas suas funcionalidiades.
+ * Classe que representa o PAF no sistema e todas suas funcionalidades.
  *
  * @author Pedro H. Lira
  */
@@ -80,9 +83,9 @@ public final class PAF {
         n9.setCnpj(AUXILIAR.getProperty("sh.cnpj"));
         n9.setIe(AUXILIAR.getProperty("sh.ie"));
         n9.setTotal(listaN3.size());
-        // cria o modelo do anexo X
-        AnexoX anexoX = new AnexoX(n1, n2, listaN3, n9);
-        String md5Arquivo = gerarArquivos(anexoX);
+        // cria o modelo do anexo III
+        AnexoIII anexoIII = new AnexoIII(n1, n2, listaN3, n9);
+        String md5Arquivo = gerarArquivos(anexoIII);
         if (!AUXILIAR.isEmpty()) {
             AUXILIAR.setProperty("out.autenticado", md5Arquivo);
             Util.criptografar(null, PAF.AUXILIAR);
@@ -92,28 +95,28 @@ public final class PAF {
     /**
      * Metodo que gera o arquivo exigido no anexo X do (ER-PAF-ECF)
      *
-     * @param anexoX o modelo de dados a ser gravado no arquivo.
+     * @param anexoIII o modelo de dados a ser gravado no arquivo.
      * @return o MD5 do arquivo gerado.
      * @throws Exception dispara caso nao consiga.
      */
-    public static String gerarArquivos(AnexoX anexoX) throws Exception {
+    public static String gerarArquivos(AnexoIII anexoIII) throws Exception {
         // gerar o arquivo
         String path = Util.getPathArquivos() + "arquivoMD5.txt";
         FileWriter fw = new FileWriter(path);
 
         // compila no formato
         StreamFactory factory = StreamFactory.newInstance();
-        factory.load(PAF.class.getClass().getResourceAsStream("/br/com/phdss/modelo/anexo/x/AnexoX.xml"));
-        BeanWriter bw = factory.createWriter("AnexoX", fw);
+        factory.load(PAF.class.getClass().getResourceAsStream("/br/com/phdss/modelo/anexo/iii/AnexoIII.xml"));
+        BeanWriter bw = factory.createWriter("AnexoIII", fw);
 
         // escevendo no arquivo
-        bw.write(anexoX.getN1());
-        bw.write(anexoX.getN2());
-        for (N3 n3 : anexoX.getListaN3()) {
+        bw.write(anexoIII.getN1());
+        bw.write(anexoIII.getN2());
+        for (N3 n3 : anexoIII.getListaN3()) {
             bw.write(n3);
             bw.flush();
         }
-        bw.write(anexoX.getN9());
+        bw.write(anexoIII.getN9());
         bw.flush();
         bw.close();
 
@@ -129,7 +132,7 @@ public final class PAF {
      */
     public static void leituraX() throws Exception {
         String[] resp = ECF.getInstancia().enviar(EComando.ECF_LeituraX);
-        if (resp[0].equals("ERRO")) {
+        if (resp[0].equals(IECF.ERRO)) {
             throw new Exception(resp[1]);
         }
     }
@@ -146,50 +149,67 @@ public final class PAF {
     }
 
     /**
-     * Metodo que gera o arquivo exigido no anexo V do (ER-PAF-ECF)
+     * Metodo que gera o arquivo binario e seu txt assinado.
      *
-     * @param anexoV o modelo de dados a ser gravado no arquivo.
      * @return o path do arquivo gerado.
      * @throws Exception dispara caso nao consiga.
      */
-    public static String gerarTabProdutos(AnexoV anexoV) throws Exception {
-        // gerar o arquivo
-        StringBuilder sb = new StringBuilder(Util.getPathArquivos());
-        sb.append("TabelaProdutos_").append(new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())).append(".txt");
-        FileWriter fw = new FileWriter(sb.toString());
+    public static String gerarArqMF() throws Exception {
+        String pathBin = Util.getPathArquivos() + "ArqMF.bin";
+        String pathTxt = Util.getPathArquivos() + "ArqMF.txt";
+        String[] resp = ECF.getInstancia().enviar(EComando.ECF_PafMF_ArqMF, pathBin);
 
-        // compila no formato
-        StreamFactory factory = StreamFactory.newInstance();
-        factory.load(PAF.class.getClass().getResourceAsStream("/br/com/phdss/modelo/anexo/v/AnexoV.xml"));
-        BeanWriter bw = factory.createWriter("AnexoV", fw);
-
-        // escevendo no arquivo
-        bw.write(anexoV.getP1());
-        for (P2 p2 : anexoV.getListaP2()) {
-            bw.write(p2);
-            bw.flush();
+        if (resp[0].equals(IECF.OK)) {
+            String ead = Util.gerarEAD(pathBin);
+            try (FileWriter outArquivo = new FileWriter(pathTxt, true)) {
+                outArquivo.write(ead);
+                outArquivo.write("\r\n");
+                outArquivo.flush();
+            }
+        } else {
+            throw new Exception(resp[1]);
         }
-        bw.write(anexoV.getP9());
-        bw.flush();
-        bw.close();
 
-        // assinando o arquivo
-        Util.assinarArquivoEAD(sb.toString());
-        return sb.toString();
+        return pathBin;
+    }
+
+    /**
+     * Metodo que gera o arquivo binario e seu txt assinado.
+     *
+     * @return o path do arquivo gerado.
+     * @throws Exception dispara caso nao consiga.
+     */
+    public static String gerarArqMFD() throws Exception {
+        String pathBin = Util.getPathArquivos() + "ArqMFD.bin";
+        String pathTxt = Util.getPathArquivos() + "ArqMFD.txt";
+        String[] resp = ECF.getInstancia().enviar(EComando.ECF_PafMF_ArqMFD, pathBin);
+
+        if (resp[0].equals(IECF.OK)) {
+            String ead = Util.gerarEAD(pathBin);
+            try (FileWriter outArquivo = new FileWriter(pathTxt, true)) {
+                outArquivo.write(ead);
+                outArquivo.write("\r\n");
+                outArquivo.flush();
+            }
+        } else {
+            throw new Exception(resp[1]);
+        }
+
+        return pathBin;
     }
 
     /**
      * Metodo que gera o arquivo exigido no anexo IV do (ER-PAF-ECF)
      *
      * @param anexoIV o modelo de dados a ser gravado no arquivo.
+     * @param arquivo o nome do arquivo gerado.
      * @return o path do arquivo gerado.
      * @throws Exception dispara caso nao consiga.
      */
-    public static String gerarEstoque(AnexoIV anexoIV) throws Exception {
+    public static String gerarRegistros(AnexoIV anexoIV, String arquivo) throws Exception {
         // gerar o arquivo
-        StringBuilder sb = new StringBuilder(Util.getPathArquivos());
-        sb.append("Estoque_").append(new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())).append(".txt");
-        FileWriter fw = new FileWriter(sb.toString());
+        String path = Util.getPathArquivos() + arquivo;
+        FileWriter fw = new FileWriter(path);
 
         // compila no formato
         StreamFactory factory = StreamFactory.newInstance();
@@ -197,64 +217,46 @@ public final class PAF {
         BeanWriter bw = factory.createWriter("AnexoIV", fw);
 
         // escevendo no arquivo
-        bw.write(anexoIV.getE1());
+        bw.write(anexoIV.getU1());
+        for (A2 a2 : anexoIV.getListaA2()) {
+            bw.write(a2);
+            bw.flush();
+        }
+        for (P2 p2 : anexoIV.getListaP2()) {
+            bw.write(p2);
+            bw.flush();
+        }
         for (E2 e2 : anexoIV.getListaE2()) {
             bw.write(e2);
             bw.flush();
         }
-        bw.write(anexoIV.getE9());
-        bw.flush();
-        bw.close();
-
-        // assinando o arquivo
-        Util.assinarArquivoEAD(sb.toString());
-        return sb.toString();
-    }
-
-    /**
-     * Metodo que gera o arquivo exigido no anexo VI do (ER-PAF-ECF)
-     *
-     * @param anexoVI o modelo de dados a ser gravado no arquivo.
-     * @param arquivo o mome do arquivo a ser gerado.
-     * @return o path do arquivo completo gerado.
-     * @throws Exception dispara caso nao consiga.
-     */
-    public static String gerarMovimentosECF(AnexoVI anexoVI, String arquivo) throws Exception {
-        // gerar o arquivo
-        String path = Util.getPathArquivos() + arquivo;
-        FileWriter fw = new FileWriter(path);
-
-        // compila no formato
-        StreamFactory factory = StreamFactory.newInstance();
-        factory.load(PAF.class.getClass().getResourceAsStream("/br/com/phdss/modelo/anexo/vi/AnexoVI.xml"));
-        BeanWriter bw = factory.createWriter("AnexoVI", fw);
-
-        // escevendo no arquivo
-        bw.write(anexoVI.getR01());
-        for (R02 r02 : anexoVI.getListaR02()) {
+        bw.write(anexoIV.getE3());
+        bw.write(anexoIV.getR01());
+        for (R02 r02 : anexoIV.getListaR02()) {
             bw.write(r02);
             bw.flush();
         }
-        for (R03 r03 : anexoVI.getListaR03()) {
+        for (R03 r03 : anexoIV.getListaR03()) {
             bw.write(r03);
             bw.flush();
         }
-        for (R04 r04 : anexoVI.getListaR04()) {
+        for (R04 r04 : anexoIV.getListaR04()) {
             bw.write(r04);
             bw.flush();
         }
-        for (R05 r05 : anexoVI.getListaR05()) {
+        for (R05 r05 : anexoIV.getListaR05()) {
             bw.write(r05);
             bw.flush();
         }
-        for (R06 r06 : anexoVI.getListaR06()) {
+        for (R06 r06 : anexoIV.getListaR06()) {
             bw.write(r06);
             bw.flush();
         }
-        for (R07 r07 : anexoVI.getListaR07()) {
+        for (R07 r07 : anexoIV.getListaR07()) {
             bw.write(r07);
             bw.flush();
         }
+        bw.flush();
         bw.close();
 
         // assinando o arquivo
@@ -383,107 +385,6 @@ public final class PAF {
     }
 
     /**
-     * Metodo que emite o relatorio dos meios de pagamentos.
-     *
-     * @param inicio data de inicio do relatorio.
-     * @param fim data de fim do relatorio.
-     * @param pagamentos lista de pagamentos agrupados e ordenados pela data ASC
-     * @param relatorio o codigo do relatorio de pagamentos cadastro no ECF
-     * @throws Exception dispara uma exececao caso nao consiga.
-     */
-    public static void emitirMeiosPagamentos(String inicio, String fim, List<R07> pagamentos, String relatorio) throws Exception {
-        StringBuilder sb = new StringBuilder();
-        IECF ecf = ECF.getInstancia();
-
-        // abrindo o relatorio
-        String[] resp = ecf.enviar(EComando.ECF_AbreRelatorioGerencial, relatorio);
-        if (resp[0].equals("ERRO")) {
-            ecf.enviar(EComando.ECF_CorrigeEstadoErro);
-        }
-
-        // cabecalho
-        sb.append(IECF.LD).append(IECF.SL);
-        sb.append("<N>").append(Util.formataTexto("MEIOS DE PAGAMENTO", " ", IECF.COL, Util.EDirecao.AMBOS)).append("</N>").append(IECF.SL);
-        sb.append(" PERIODO SOLICITADO DE ").append(inicio).append(" A ").append(fim).append(IECF.SL);
-        sb.append(IECF.LD).append(IECF.SL);
-        sb.append(IECF.SL); // pula linha
-        ecf.enviar(EComando.ECF_LinhaRelatorioGerencial, sb.toString());
-
-        // dados por dia
-        String aux = null;
-        double subTotal = 0.00;
-        NumberFormat nf = NumberFormat.getCurrencyInstance();
-        Map<String, Double> total = new HashMap<>();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-
-        for (R07 pag : pagamentos) {
-            String data = sdf.format(pag.getData());
-            if (!data.equals(aux)) {
-                if (aux != null) {
-                    // fechando um dia
-                    ecf.enviar(EComando.ECF_LinhaRelatorioGerencial, IECF.LS);
-                    sb = new StringBuilder("\"");
-                    sb.append("SOMA DO DIA ").append(aux).append("  ");
-                    sb.append(nf.format(subTotal));
-                    sb.append("\"");
-                    ecf.enviar(EComando.ECF_LinhaRelatorioGerencial, sb.toString());
-                    ecf.enviar(EComando.ECF_LinhaRelatorioGerencial, IECF.LS);
-                    subTotal = 0.00;
-                }
-                aux = data;
-            }
-            // dados do dia
-            sb = new StringBuilder("\"");
-            sb.append(formataTexto(sdf.format(pag.getData()), " ", 11, true));
-            sb.append(formataTexto(pag.getMeioPagamento().toUpperCase(), " ", 15, true));
-            sb.append(formataTexto(pag.getSerie(), " ", 12, true));
-            sb.append(nf.format(pag.getValor() / 100));
-            sb.append("\"");
-            ecf.enviar(EComando.ECF_LinhaRelatorioGerencial, sb.toString());
-            // subtotal daquele dia de todos os meios
-            subTotal += pag.getValor() / 100;
-            // total geral daquele meio
-            double tot = total.containsKey(pag.getMeioPagamento()) ? total.get(pag.getMeioPagamento()) : 0.00;
-            total.put(pag.getMeioPagamento(), tot + pag.getValor() / 100);
-        }
-
-        // fechando o ultimo dia
-        if (aux != null) {
-            ecf.enviar(EComando.ECF_LinhaRelatorioGerencial, IECF.LS);
-            sb = new StringBuilder("\"");
-            sb.append("SOMA DO DIA ").append(aux).append("  ");
-            sb.append(nf.format(subTotal));
-            sb.append("\"");
-            ecf.enviar(EComando.ECF_LinhaRelatorioGerencial, sb.toString());
-            ecf.enviar(EComando.ECF_LinhaRelatorioGerencial, IECF.LS);
-        }
-        subTotal = 0.00;
-
-        // rodape
-        ecf.enviar(EComando.ECF_LinhaRelatorioGerencial, Util.formataTexto("TOTAL DO PERIODO SOLICITADO", " ", IECF.COL, Util.EDirecao.AMBOS));
-        ecf.enviar(EComando.ECF_PulaLinhas, "1");
-        ecf.enviar(EComando.ECF_LinhaRelatorioGerencial, IECF.LS);
-        ecf.enviar(EComando.ECF_PulaLinhas, "1");
-
-        for (Entry<String, Double> tot : total.entrySet()) {
-            sb = new StringBuilder("\"");
-            sb.append(formataTexto(tot.getKey().toUpperCase(), " ", 35, true));
-            sb.append(nf.format(tot.getValue()));
-            sb.append("\"");
-            ecf.enviar(EComando.ECF_LinhaRelatorioGerencial, sb.toString());
-            subTotal += tot.getValue();
-        }
-
-        ecf.enviar(EComando.ECF_LinhaRelatorioGerencial, IECF.LS);
-        sb = new StringBuilder("\"");
-        sb.append("SOMA TOTAL  ");
-        sb.append(nf.format(subTotal));
-        sb.append("\"");
-        ecf.enviar(EComando.ECF_LinhaRelatorioGerencial, sb.toString());
-        ecf.enviar(EComando.ECF_FechaRelatorio);
-    }
-
-    /**
      * Metodo que emite o relatorio de identificacao do PAF.
      *
      * @param relatorio o codigo do relatorio de identificacao do paf-ecf
@@ -496,7 +397,7 @@ public final class PAF {
 
         // abrindo o relatorio
         String[] resp = ecf.enviar(EComando.ECF_AbreRelatorioGerencial, relatorio);
-        if (resp[0].equals("ERRO")) {
+        if (resp[0].equals(IECF.ERRO)) {
             ecf.enviar(EComando.ECF_CorrigeEstadoErro);
             throw new Exception(resp[1]);
         }
@@ -556,7 +457,7 @@ public final class PAF {
 
         // envia o comando com todo o texto
         ecf.enviar(EComando.ECF_LinhaRelatorioGerencial, sb.toString());
-        if (resp[0].equals("ERRO")) {
+        if (resp[0].equals(IECF.ERRO)) {
             ecf.enviar(EComando.ECF_CorrigeEstadoErro);
             throw new Exception(resp[1]);
         } else {
@@ -576,7 +477,7 @@ public final class PAF {
 
         // abrindo o relatorio
         String[] resp = ecf.enviar(EComando.ECF_AbreRelatorioGerencial, relatorio);
-        if (resp[0].equals("ERRO")) {
+        if (resp[0].equals(IECF.ERRO)) {
             ecf.enviar(EComando.ECF_CorrigeEstadoErro);
             throw new Exception(resp[1]);
         }
@@ -604,7 +505,7 @@ public final class PAF {
         sb.append(IECF.LS).append(IECF.SL);
         sb.append("TIPO DE FUNCIONAMENTO..........: PARAMETRIZAVEL ").append(IECF.SL);
         sb.append("TIPO DE DESENVOLVIMENTO........: COMERCIALIZAVEL").append(IECF.SL);
-        sb.append("INTEGRACAO DO PAF-ECF..........: NAO INTEGRADO  ").append(IECF.SL);
+        sb.append("INTEGRACAO DO PAF-ECF..........: OPENPDV        ").append(IECF.SL);
         sb.append(IECF.SL); // pula linha
         // nao concomitancia
         sb.append(IECF.LS).append(IECF.SL);
@@ -634,41 +535,43 @@ public final class PAF {
         sb.append("MINAS LEGAL................................: ").append(AUXILIAR.getProperty("paf.minas_legal")).append(IECF.SL);
         sb.append("CUPOM MANIAL...............................: ").append(AUXILIAR.getProperty("paf.cupom_mania")).append(IECF.SL);
         sb.append("CUPOM LEGAL................................: ").append(AUXILIAR.getProperty("paf.cupom_legal")).append(IECF.SL);
+        sb.append("PARAÍBA LEGAL..............................: ").append(AUXILIAR.getProperty("paf.paraiba_legal")).append(IECF.SL);
         sb.append(IECF.SL); // pula linha
         sb.append("REQUISITO XVIII - Tela Consulta de Preco.......:").append(IECF.SL);
         sb.append("TOTALIZACAO DOS VALORES DA LISTA...........: NAO").append(IECF.SL);
         sb.append("TRANSFORMACAO DAS INFORMACOES EM PRE-VENDA.: NAO").append(IECF.SL);
         sb.append("TRANSFORMACAO DAS INFORMACOES EM DAV.......: NAO").append(IECF.SL);
         sb.append(IECF.SL); // pula linha
-        sb.append("REQUISITO XXII ITEM 8 - PAF-ECF Integrado ao ECF").append(IECF.SL);
+        sb.append("REQUISITO XXIV ITEM 8 - PAF-ECF Integrado ao ECF").append(IECF.SL);
         sb.append("NAO COINCIDENCIA GT da ECF x ARQ. CRIPTOGRAFADO ").append(IECF.SL);
         sb.append("RECOMPOE VALOR DO GT ARQUIVO CRIPTOGRAFADO.: SIM").append(IECF.SL);
 
         // envia o comando com todo o texto
         ecf.enviar(EComando.ECF_LinhaRelatorioGerencial, sb.toString());
-        if (resp[0].equals("ERRO")) {
+        if (resp[0].equals(IECF.ERRO)) {
             ecf.enviar(EComando.ECF_CorrigeEstadoErro);
             throw new Exception(resp[1]);
         } else {
             ecf.enviar(EComando.ECF_FechaRelatorio);
         }
     }
-
+    
     /**
-     * Metodo que formata o texto.
+     * Metodo que altera a quantidade de registros validos para o PAF.
      *
-     * @param texto o texto a ser formatado.
-     * @param caracter o caracter que sera repetido.
-     * @param tamanho o tamanho total do texto de resposta.
-     * @param direita a direcao onde colocar os caracteres.
-     * @return o texto formatado.
+     * @param dado o objeto que esta sendo adicionado ou removido.
+     * @param qtd a quantidade positiva ou negativa.
      */
-    private static String formataTexto(String texto, String caracter, int tamanho, boolean direita) {
-        StringBuilder sb = new StringBuilder();
-        int fim = tamanho - texto.length();
-        for (int i = 0; i < fim; i++) {
-            sb.append(caracter);
+    public static void validarPAF(Object dado, int qtd) {
+        if (dado.getClass().getSimpleName().startsWith("Ecf") || dado.getClass().getSimpleName().equals("ProdProduto")) {
+            long registros = Long.valueOf(AUXILIAR.getProperty("paf.registros"));
+            registros += qtd;
+            AUXILIAR.setProperty("paf.registros", registros + "");
+            try {
+                Util.criptografar(null, AUXILIAR);
+            } catch (Exception ex) {
+                // nada
+            }
         }
-        return direita ? texto + sb.toString() : sb.toString() + texto;
     }
 }

@@ -1,9 +1,9 @@
-package br.com.phdss.modelo.anexo.vi;
+package br.com.phdss.modelo.anexo.iv;
 
 import java.util.Date;
 
 /**
- * Classe que representa o modelo R06 do anexo VI.
+ * Classe que representa o modelo R06 do anexo IV.
  *
  * @author Pedro H. Lira
  */
@@ -17,7 +17,7 @@ public class R06 extends CabecalhoR {
     private Date data;
     
     public R06() {
-        padrao = "R06";
+        this.padrao = "R06";
     }
 
     public int getCdc() {

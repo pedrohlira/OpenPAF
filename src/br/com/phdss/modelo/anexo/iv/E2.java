@@ -18,7 +18,7 @@ public class E2 extends Bean {
     private char mensuracao;
     
     public E2() {
-        padrao = "E2";
+        this.padrao = "E2";
     }
 
     public String getCnpj() {

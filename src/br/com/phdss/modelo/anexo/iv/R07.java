@@ -1,9 +1,9 @@
-package br.com.phdss.modelo.anexo.vi;
+package br.com.phdss.modelo.anexo.iv;
 
 import java.util.Date;
 
 /**
- * Classe que representa o modelo R07 do anexo VI.
+ * Classe que representa o modelo R07 do anexo IV.
  *
  * @author Pedro H. Lira
  */
@@ -19,7 +19,7 @@ public class R07 extends CabecalhoR {
     private Double valorEstorno;
     
     public R07() {
-        padrao = "R07";
+        this.padrao = "R07";
     }
 
     public int getCcf() {

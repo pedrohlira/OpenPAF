@@ -1,9 +1,9 @@
-package br.com.phdss.modelo.anexo.vi;
+package br.com.phdss.modelo.anexo.iv;
 
 import java.util.Date;
 
 /**
- * Classe que representa o modelo R02 do anexo VI.
+ * Classe que representa o modelo R02 do anexo IV.
  *
  * @author Pedro H. Lira
  */
@@ -18,7 +18,7 @@ public class R02 extends CabecalhoR {
     private char issqn;
     
     public R02() {
-        padrao = "R02";
+        this.padrao = "R02";
     }
 
     public Double getBruto() {

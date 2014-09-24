@@ -1,9 +1,9 @@
-package br.com.phdss.modelo.anexo.vi;
+package br.com.phdss.modelo.anexo.iv;
 
 import java.util.Date;
 
 /**
- * Classe que representa o modelo R04 do anexo VI.
+ * Classe que representa o modelo R04 do anexo IV.
  *
  * @author Pedro H. Lira
  */
@@ -25,7 +25,7 @@ public class R04 extends CabecalhoR {
     private String clienteCPF;
     
     public R04() {
-        padrao = "R04";
+       this.padrao = "R04";
     }
 
     public Double getAcrescimo() {

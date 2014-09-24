@@ -1,19 +1,20 @@
-package br.com.phdss.modelo.anexo.x;
+package br.com.phdss.modelo.anexo.iii;
+
+import br.com.phdss.modelo.anexo.Bean;
 
 /**
- * Classe que representa o modelo N2 do anexo X.
+ * Classe que representa o modelo N2 do anexo III.
  *
  * @author Pedro H. Lira
  */
-public class N2 {
+public class N2 extends Bean{
 
-    private String padrao;
     private String laudo;
     private String nome;
     private String versao;
 
     public N2() {
-        padrao = "N2";
+        this.padrao = "N2";
     }
 
     public String getLaudo() {
@@ -30,14 +31,6 @@ public class N2 {
 
     public void setNome(String nome) {
         this.nome = nome;
-    }
-
-    public String getPadrao() {
-        return padrao;
-    }
-
-    public void setPadrao(String padrao) {
-        this.padrao = padrao;
     }
 
     public String getVersao() {
