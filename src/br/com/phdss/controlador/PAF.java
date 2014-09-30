@@ -154,14 +154,16 @@ public final class PAF {
      * @return o path do arquivo gerado.
      * @throws Exception dispara caso nao consiga.
      */
-    public static String gerarArqMF() throws Exception {
-        String pathBin = Util.getPathArquivos() + "ArqMF.bin";
-        String pathTxt = Util.getPathArquivos() + "ArqMF.txt";
+    public static String[] gerarArqMF() throws Exception {
+        String serie = ECF.getInstancia().enviar(EComando.ECF_NumSerie)[1];
+        String data = Util.formataData(new Date(), "yyyyMMdd_HHmmss");
+        String pathBin = Util.getPathArquivos() + serie + "_" + data + ".MF";
+        String pathTxt = Util.getPathArquivos() + "MF" + serie + "_" + data + ".TXT";
         String[] resp = ECF.getInstancia().enviar(EComando.ECF_PafMF_ArqMF, pathBin);
 
         if (resp[0].equals(IECF.OK)) {
             String ead = Util.gerarEAD(pathBin);
-            try (FileWriter outArquivo = new FileWriter(pathTxt, true)) {
+            try (FileWriter outArquivo = new FileWriter(pathTxt, false)) {
                 outArquivo.write(ead);
                 outArquivo.write("\r\n");
                 outArquivo.flush();
@@ -170,7 +172,9 @@ public final class PAF {
             throw new Exception(resp[1]);
         }
 
-        return pathBin;
+        // deletando o txt gerado pelo ACBR
+        new File(pathBin.replace(".MF", ".TXT")).delete();
+        return new String[] {pathBin, pathTxt};
     }
 
     /**
@@ -179,14 +183,16 @@ public final class PAF {
      * @return o path do arquivo gerado.
      * @throws Exception dispara caso nao consiga.
      */
-    public static String gerarArqMFD() throws Exception {
-        String pathBin = Util.getPathArquivos() + "ArqMFD.bin";
-        String pathTxt = Util.getPathArquivos() + "ArqMFD.txt";
+    public static String[] gerarArqMFD() throws Exception {
+        String serie = ECF.getInstancia().enviar(EComando.ECF_NumSerie)[1];
+        String data = Util.formataData(new Date(), "yyyyMMdd_HHmmss");
+        String pathBin = Util.getPathArquivos() + serie + "_" + data + ".MFD";
+        String pathTxt = Util.getPathArquivos() + "MFD" + serie + "_" + data + ".TXT";
         String[] resp = ECF.getInstancia().enviar(EComando.ECF_PafMF_ArqMFD, pathBin);
 
         if (resp[0].equals(IECF.OK)) {
             String ead = Util.gerarEAD(pathBin);
-            try (FileWriter outArquivo = new FileWriter(pathTxt, true)) {
+            try (FileWriter outArquivo = new FileWriter(pathTxt, false)) {
                 outArquivo.write(ead);
                 outArquivo.write("\r\n");
                 outArquivo.flush();
@@ -195,7 +201,9 @@ public final class PAF {
             throw new Exception(resp[1]);
         }
 
-        return pathBin;
+        // deletando o txt gerado pelo ACBR
+        new File(pathBin.replace(".MFD", ".TXT")).delete();
+        return new String[] {pathBin, pathTxt};
     }
 
     /**
@@ -487,64 +495,8 @@ public final class PAF {
         sb.append("<N>").append(Util.formataTexto("PARAMETROS DE CONFIGURACAO", " ", IECF.COL, Util.EDirecao.AMBOS)).append("</N>").append(IECF.SL);
         sb.append(IECF.LD).append(IECF.SL);
         sb.append(IECF.SL); // pula linha
-        sb.append(Util.formataTexto("IDENTIFICACAO E CARACTERISTICAS", " ", IECF.COL, Util.EDirecao.AMBOS)).append(IECF.SL);
-        sb.append(Util.formataTexto("DO PROGRAMA APLICATIVO FISCAL", " ", IECF.COL, Util.EDirecao.AMBOS)).append(IECF.SL);
-        sb.append(IECF.SL).append(IECF.SL); // pula linha
-        sb.append("TODAS AS PARAMETRIZACOES RELACIONADAS NESTE     ").append(IECF.SL);
-        sb.append("RELATORIO SAO DE CONFIGURACAO INACESSIVEL AO    ").append(IECF.SL);
-        sb.append("USUARIO DO PAF-ECF NAO E DOCUMENTO FISCAL.      ").append(IECF.SL);
-        sb.append(IECF.SL); // pula linha
-        sb.append("ATIVACAO OU NAO DESTES PARAMETROS E DETERMINADA ").append(IECF.SL);
-        sb.append("PELA UNIDADE FEDERADA E SOMENTE PODE SER FEITA  ").append(IECF.SL);
-        sb.append("PELA INTERVENCAO DA EMPRESA DESENVOLVEDORA DO   ").append(IECF.SL);
-        sb.append("PAF-ECF.").append(IECF.SL);
-        sb.append(IECF.SL); // pula linha
-        // funcionalidades
-        sb.append(IECF.LS).append(IECF.SL);
-        sb.append(Util.formataTexto("FUNCIONALIDADES", " ", IECF.COL, Util.EDirecao.AMBOS)).append(IECF.SL);
-        sb.append(IECF.LS).append(IECF.SL);
-        sb.append("TIPO DE FUNCIONAMENTO..........: PARAMETRIZAVEL ").append(IECF.SL);
-        sb.append("TIPO DE DESENVOLVIMENTO........: COMERCIALIZAVEL").append(IECF.SL);
-        sb.append("INTEGRACAO DO PAF-ECF..........: OPENPDV        ").append(IECF.SL);
-        sb.append(IECF.SL); // pula linha
-        // nao concomitancia
-        sb.append(IECF.LS).append(IECF.SL);
-        sb.append(Util.formataTexto("PARAMETROS PARA NAO CONCOMITANCIA", " ", IECF.COL, Util.EDirecao.AMBOS)).append(IECF.SL);
-        sb.append(IECF.LS).append(IECF.SL);
-        sb.append("PRE-VENDA..................................: NAO").append(IECF.SL);
-        sb.append("DAV POR ECF................................: NAO").append(IECF.SL);
-        sb.append("DAV IMPRESSORA NAO FISCAL..................: NAO").append(IECF.SL);
-        sb.append("DAV-OS.....................................: NAO").append(IECF.SL);
-        sb.append(IECF.SL); // pula linha
-        // aplicacoes especiais
-        sb.append(IECF.LS).append(IECF.SL);
-        sb.append(Util.formataTexto("APLICACOES ESPECIAIS", " ", IECF.COL, Util.EDirecao.AMBOS)).append(IECF.SL);
-        sb.append(IECF.LS).append(IECF.SL);
-        sb.append("TAB. INDICE TECNICO DE PRODUCAO............: NAO").append(IECF.SL);
-        sb.append("POSTO REVENDEDOR DE COMBUSTIVEIS...........: NAO").append(IECF.SL);
-        sb.append("BAR - RESTAURANTE - SIMILAR................: NAO").append(IECF.SL);
-        sb.append("FARMACIA DE MANIPULACAO....................: NAO").append(IECF.SL);
-        sb.append("OFICINA DE CONSERTO........................: NAO").append(IECF.SL);
-        sb.append("TRANSPORTE DE PASSAGEIROS..................: NAO").append(IECF.SL);
-        sb.append(IECF.SL); // pula linha
-        // unidade federada
-        sb.append(IECF.LS).append(IECF.SL);
-        sb.append(Util.formataTexto("A CRITERIO DA UNIDADE FEDERADA", " ", IECF.COL, Util.EDirecao.AMBOS)).append(IECF.SL);
-        sb.append(IECF.LS).append(IECF.SL);
-        sb.append(IECF.SL); // pula linha
-        sb.append("MINAS LEGAL................................: ").append(AUXILIAR.getProperty("paf.minas_legal")).append(IECF.SL);
-        sb.append("CUPOM MANIAL...............................: ").append(AUXILIAR.getProperty("paf.cupom_mania")).append(IECF.SL);
-        sb.append("CUPOM LEGAL................................: ").append(AUXILIAR.getProperty("paf.cupom_legal")).append(IECF.SL);
-        sb.append("PARAÍBA LEGAL..............................: ").append(AUXILIAR.getProperty("paf.paraiba_legal")).append(IECF.SL);
-        sb.append(IECF.SL); // pula linha
-        sb.append("REQUISITO XVIII - Tela Consulta de Preco.......:").append(IECF.SL);
-        sb.append("TOTALIZACAO DOS VALORES DA LISTA...........: NAO").append(IECF.SL);
-        sb.append("TRANSFORMACAO DAS INFORMACOES EM PRE-VENDA.: NAO").append(IECF.SL);
-        sb.append("TRANSFORMACAO DAS INFORMACOES EM DAV.......: NAO").append(IECF.SL);
-        sb.append(IECF.SL); // pula linha
-        sb.append("REQUISITO XXIV ITEM 8 - PAF-ECF Integrado ao ECF").append(IECF.SL);
-        sb.append("NAO COINCIDENCIA GT da ECF x ARQ. CRIPTOGRAFADO ").append(IECF.SL);
-        sb.append("RECOMPOE VALOR DO GT ARQUIVO CRIPTOGRAFADO.: SIM").append(IECF.SL);
+        sb.append("UF: ").append(AUXILIAR.getProperty("cli.estado")).append(IECF.SL);
+        sb.append("PERFIL: ").append(AUXILIAR.getProperty("cli.perfil")).append(IECF.SL);
 
         // envia o comando com todo o texto
         ecf.enviar(EComando.ECF_LinhaRelatorioGerencial, sb.toString());

@@ -109,7 +109,7 @@ public class R04 extends CabecalhoR {
     }
 
     public Double getLiquido() {
-        return liquido;
+        return liquido * 100;
     }
 
     public void setLiquido(Double liquido) {
